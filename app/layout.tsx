@@ -8,7 +8,7 @@ import "./globals.css";
 
 // モックを有効化
 if (EnvConfig.util.enableMocks) {
-  initMocks();
+  await initMocks();
 }
 
 const geistSans = Geist({
