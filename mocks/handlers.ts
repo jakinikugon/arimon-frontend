@@ -10,5 +10,5 @@ export const handlers = [
     });
   }),
 
-  // Mock API endpoint
+  // Add additional mock handlers below
 ];
