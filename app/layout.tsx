@@ -1,7 +1,15 @@
+import { initMocks } from "@/mocks";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { EnvConfig } from "@/lib/env";
+
 import "./globals.css";
+
+// モックを有効化
+if (EnvConfig.util.enableMocks) {
+  await initMocks();
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

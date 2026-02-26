@@ -41,3 +41,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # とりあえずダミーの変数を設定しておく
+          # 今後必要に応じて GitHub Secrets から値を取得するようにする
+          NEXT_PUBLIC_BACKEND_API_URL: https://backend.example.com/
+          NEXT_PUBLIC_MOCK_API_URL: https://mock.example.com/
+          NEXT_PUBLIC_USE_MOCKS: false
