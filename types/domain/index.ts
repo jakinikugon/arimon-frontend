@@ -1,5 +1,11 @@
 export type { ImageId, ItemId, PantryItemId, UserId } from "./common";
-export type { AccountType, Allergen, Buyer, BuyerName, BuyerSetting } from "./user";
+export type {
+  AccountType,
+  Allergen,
+  Buyer,
+  BuyerName,
+  BuyerSetting,
+} from "./user";
 export type {
   Store,
   StoreAddress,

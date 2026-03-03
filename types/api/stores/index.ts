@@ -1,4 +1,8 @@
-export type { StoresMeGetResponse, StoresMePatchRequest, StoresMePatchResponse } from "./me";
+export type {
+  StoresMeGetResponse,
+  StoresMePatchRequest,
+  StoresMePatchResponse,
+} from "./me";
 export type { StoresMeReportsGetResponse } from "./me-reports";
 export type {
   StoresMeItemsGetResponse,

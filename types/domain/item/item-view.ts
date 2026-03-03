@@ -3,7 +3,7 @@ import type { StoreProfile } from "../user";
 import type { Item, ItemCategory } from "./item";
 
 export type ItemViewForBuyer = Item & {
-   // 今のところUI上で必要な拡張情報はなさそう
+  // 今のところUI上で必要な拡張情報はなさそう
 };
 
 export type ItemDetailForBuyer = ItemViewForBuyer & {

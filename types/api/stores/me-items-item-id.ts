@@ -3,6 +3,8 @@ import type { OmitId } from "../../utility/ts";
 
 export type StoresMeItemsDetailsGetResponse = ItemDetailForStore;
 
-export type StoresMeItemsDetailsPatchRequest = Partial<OmitId<ItemDetailForStore>>;
+export type StoresMeItemsDetailsPatchRequest = Partial<
+  OmitId<ItemDetailForStore>
+>;
 
 export type StoresMeItemsDetailsPatchResponse = ItemDetailForStore;

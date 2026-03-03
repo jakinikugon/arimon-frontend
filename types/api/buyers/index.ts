@@ -1,4 +1,8 @@
-export type { BuyersMeGetResponse, BuyersMePatchRequest, BuyersMePatchResponse } from "./me";
+export type {
+  BuyersMeGetResponse,
+  BuyersMePatchRequest,
+  BuyersMePatchResponse,
+} from "./me";
 export type {
   BuyersMeReportsGetResponse,
   BuyersMeReportsPostRequest,
