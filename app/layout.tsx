@@ -29,7 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={notoSans.variable}>
-      <body className="antialiased">{children}</body>
+      <body className="flex justify-center bg-gray-100 antialiased">
+        <div className="min-h-screen w-full max-w-135 bg-white shadow-sm">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
