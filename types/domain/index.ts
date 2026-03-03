@@ -22,6 +22,13 @@ export type {
   ItemViewForBuyer,
   ItemViewForStore,
 } from "./item";
-export type { Material, Pantry, PantryItem } from "./pantry";
-export type { Chat, ChatMessage, Recipe, Recipes, Role } from "./chat";
+export type { Pantry, PantryItem } from "./pantry";
+export type {
+  Chat,
+  ChatMessage,
+  Recipe,
+  Recipes,
+  Role,
+  Material,
+} from "./chat";
 export type { Reports } from "./report";

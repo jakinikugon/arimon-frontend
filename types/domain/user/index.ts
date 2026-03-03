@@ -1,4 +1,4 @@
-export type { AccountType } from "./account";
+export type { AccountType } from "./common";
 export type { Allergen, Buyer, BuyerName, BuyerSetting } from "./buyer";
 export type {
   Store,
