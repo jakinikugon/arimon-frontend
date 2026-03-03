@@ -1,1 +1,2 @@
-export type { Chat, ChatMessage, Recipe, Recipes, Role } from "./chat";
+export type { Chat, ChatMessage, Role } from "./chat";
+export type { Recipe, Material, Recipes } from "./recipe";
