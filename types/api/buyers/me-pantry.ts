@@ -6,3 +6,5 @@ export type BuyersMePantryGetResponse = Pantry;
 export type BuyersMePantryPostRequest = OmitId<PantryItem>;
 
 export type BuyersMePantryPostResponse = Pantry;
+
+export type BuyersMePantryDeleteResponse = Pantry;

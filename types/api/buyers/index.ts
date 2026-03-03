@@ -12,8 +12,8 @@ export type {
   BuyersMePantryGetResponse,
   BuyersMePantryPostRequest,
   BuyersMePantryPostResponse,
+  BuyersMePantryDeleteResponse,
 } from "./me-pantry";
-export type { BuyersMePantryDeleteResponse } from "./me-pantry-pantry-item-id";
 export type {
   BuyersMeChatMessagesGetResponse,
   BuyersMeChatMessagesPostRequest,
