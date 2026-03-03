@@ -18,6 +18,9 @@ const optional = (name: string, defaultValue: string): string => {
 };
 
 export const EnvConfig = {
+  meta: {
+    rootUrl: required("NEXT_PUBLIC_ROOT_URL"),
+  },
   api: {
     backend: required("NEXT_PUBLIC_BACKEND_API_URL"),
     mock: required("NEXT_PUBLIC_MOCK_API_URL"),
