@@ -1,5 +1,5 @@
 import { initMocks } from "@/mocks";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_JP } from "next/font/google";
 
 import { META_CONFIG } from "@/constants/metadata";
 
@@ -13,14 +13,11 @@ if (EnvConfig.util.enableMocks) {
   await initMocks();
 }
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSans = Noto_Sans_JP({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata = createMetadata(META_CONFIG);
@@ -31,12 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="ja" className={notoSans.variable}>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
