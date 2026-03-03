@@ -1,1 +1,1 @@
-export type { OmitId } from "./helpers";
+export type { Bland, OmitId } from "./helpers";
