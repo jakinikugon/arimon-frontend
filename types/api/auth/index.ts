@@ -1,4 +1,4 @@
-export type { AuthRegisterRequest, AuthRegisterResponse } from "./register";
-export type { AuthLoginRequest, AuthLoginResponse } from "./login";
+export type { AuthRegisterPostRequest, AuthRegisterPostResponse } from "./register";
+export type { AuthLoginPostRequest, AuthLoginPostResponse } from "./login";
 export type { AuthSessionGetResponse } from "./session";
-export type { AuthRefreshRequest, AuthRefreshResponse } from "./refresh";
+export type { AuthRefreshPostRequest, AuthRefreshPostResponse } from "./refresh";
