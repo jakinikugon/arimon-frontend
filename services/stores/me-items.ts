@@ -1,5 +1,3 @@
-import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 import type {
   StoresMeItemsGetResponse,
   StoresMeItemsPostRequest,
@@ -8,10 +6,16 @@ import type {
 import type { ItemCategory } from "@/types/domain";
 import type { JanCode, Timestamp, URL } from "@/types/utility/scalars";
 
+import { backendApiUrl } from "@/lib/api";
+import { fetcher } from "@/lib/fetcher";
+
 export async function getStoresMeItems() {
-  return fetcher<StoresMeItemsGetResponse>(backendApiUrl("/api/stores/me/items"), {
-    method: "GET",
-  });
+  return fetcher<StoresMeItemsGetResponse>(
+    backendApiUrl("/api/stores/me/items"),
+    {
+      method: "GET",
+    },
+  );
 }
 
 export async function postStoresMeItems(
@@ -43,11 +47,14 @@ export async function postStoresMeItems(
     limitDate,
   };
 
-  return fetcher<StoresMeItemsPostResponse>(backendApiUrl("/api/stores/me/items"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  return fetcher<StoresMeItemsPostResponse>(
+    backendApiUrl("/api/stores/me/items"),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     },
-    body: JSON.stringify(body),
-  });
+  );
 }

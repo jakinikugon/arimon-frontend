@@ -1,5 +1,3 @@
-import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 import type {
   BuyersMePantryDeleteResponse,
   BuyersMePantryGetResponse,
@@ -9,10 +7,16 @@ import type {
 import type { ItemCategory, PantryItemId } from "@/types/domain";
 import type { JanCode } from "@/types/utility/scalars";
 
+import { backendApiUrl } from "@/lib/api";
+import { fetcher } from "@/lib/fetcher";
+
 export async function getBuyersMePantry() {
-  return fetcher<BuyersMePantryGetResponse>(backendApiUrl("/api/buyers/me/pantry"), {
-    method: "GET",
-  });
+  return fetcher<BuyersMePantryGetResponse>(
+    backendApiUrl("/api/buyers/me/pantry"),
+    {
+      method: "GET",
+    },
+  );
 }
 
 export async function postBuyersMePantry(

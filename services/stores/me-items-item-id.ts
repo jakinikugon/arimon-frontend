@@ -1,5 +1,3 @@
-import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 import type {
   StoresMeItemsDetailsDeleteResponse,
   StoresMeItemsDetailsGetResponse,
@@ -8,6 +6,9 @@ import type {
 } from "@/types/api";
 import type { ItemCategory, ItemId } from "@/types/domain";
 import type { JanCode, Timestamp, URL } from "@/types/utility/scalars";
+
+import { backendApiUrl } from "@/lib/api";
+import { fetcher } from "@/lib/fetcher";
 
 export async function getStoresMeItemsItemId(itemId: ItemId) {
   return fetcher<StoresMeItemsDetailsGetResponse>(

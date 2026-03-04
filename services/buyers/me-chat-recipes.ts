@@ -1,6 +1,7 @@
+import type { BuyersMeChatRecipesGetResponse } from "@/types/api";
+
 import { backendApiUrl } from "@/lib/api";
 import { fetcher } from "@/lib/fetcher";
-import type { BuyersMeChatRecipesGetResponse } from "@/types/api";
 
 export async function getBuyersMeChatRecipes() {
   return fetcher<BuyersMeChatRecipesGetResponse>(

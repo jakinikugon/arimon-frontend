@@ -1,5 +1,3 @@
-import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 import type {
   StoresMeDeleteResponse,
   StoresMeGetResponse,
@@ -12,6 +10,9 @@ import type {
   StoreIntroduction,
   StoreName,
 } from "@/types/domain";
+
+import { backendApiUrl } from "@/lib/api";
+import { fetcher } from "@/lib/fetcher";
 
 export async function getStoresMe() {
   return fetcher<StoresMeGetResponse>(backendApiUrl("/api/stores/me"), {

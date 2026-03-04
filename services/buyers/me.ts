@@ -1,5 +1,3 @@
-import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 import type {
   BuyersMeDeleteResponse,
   BuyersMeGetResponse,
@@ -7,6 +5,9 @@ import type {
   BuyersMePatchResponse,
 } from "@/types/api";
 import type { Allergen, BuyerName } from "@/types/domain";
+
+import { backendApiUrl } from "@/lib/api";
+import { fetcher } from "@/lib/fetcher";
 
 export async function getBuyersMe() {
   return fetcher<BuyersMeGetResponse>(backendApiUrl("/api/buyers/me"), {

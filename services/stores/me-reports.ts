@@ -1,6 +1,7 @@
+import type { StoresMeReportsGetResponse } from "@/types/api";
+
 import { backendApiUrl } from "@/lib/api";
 import { fetcher } from "@/lib/fetcher";
-import type { StoresMeReportsGetResponse } from "@/types/api";
 
 export async function getStoresMeReports() {
   return fetcher<StoresMeReportsGetResponse>(
