@@ -1,3 +1,6 @@
+// 空のJSONオブジェクトを表す型
+export type EmptyJSON = Record<string, never>;
+
 /**
  * REST APIを呼び出す
  * "Content-Type": "application/json"はデフォルトで設定される(オプションで上書き可能)
