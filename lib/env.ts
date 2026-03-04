@@ -22,11 +22,11 @@ import { toBoolean } from "@/utils/string";
 // 代わりに、EnvConfigオブジェクトを使用して環境変数を管理する
 export const EnvConfig = {
   meta: {
-    rootUrl: process.env.NEXT_PUBLIC_ROOT_URL,
+    rootUrl: process.env.NEXT_PUBLIC_ROOT_URL ?? "",
   },
   api: {
-    backend: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-    mock: process.env.NEXT_PUBLIC_MOCK_API_URL,
+    backend: process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "",
+    mock: process.env.NEXT_PUBLIC_MOCK_API_URL ?? "",
   },
   key: {},
   config: {
