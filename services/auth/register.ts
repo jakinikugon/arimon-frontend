@@ -6,27 +6,32 @@ import type { AccountType } from "@/types/domain";
 import type { Email, Password } from "@/types/utility/scalars";
 
 import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 
-export async function postAuthRegister(
+export async function authRegister(
   email: Email,
   password: Password,
   accountType: AccountType,
-) {
+): Promise<AuthRegisterPostResponse> {
   const body: AuthRegisterPostRequest = {
     email,
     password,
     accountType,
   };
 
-  return fetcher<AuthRegisterPostResponse>(
-    backendApiUrl("/api/auth/register"),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+  const res = await fetch(backendApiUrl("/api/auth/register"), {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res.text();
+    throw new Error(`HTTP error! status: ${res.status}, body: ${errorBody}`);
+  }
+
+  const data = (await res.json()) as AuthRegisterPostResponse;
+  return data;
 }

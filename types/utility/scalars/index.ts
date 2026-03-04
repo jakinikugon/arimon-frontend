@@ -4,3 +4,4 @@ export type { URL } from "./url";
 export type { JanCode } from "./jan-code";
 export type { Email } from "./email";
 export type { Password } from "./password";
+export type { JWT } from "./jwt";

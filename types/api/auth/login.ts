@@ -1,8 +1,10 @@
-import type { Email, Password } from "../../utility/scalars";
+import type { Email, JWT, Password } from "../../utility/scalars";
 
 export type AuthLoginPostRequest = {
   email: Email;
   password: Password;
 };
 
-export type AuthLoginPostResponse = void;
+export type AuthLoginPostResponse = {
+  accessToken: JWT;
+};

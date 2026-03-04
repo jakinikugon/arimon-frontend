@@ -1,1 +1,1 @@
-export type { Bland, OmitId } from "./helpers";
+export type { Brand, OmitId } from "./helpers";
