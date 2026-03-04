@@ -15,7 +15,8 @@ export async function fetcher<T>(
   const res = await fetch(url, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      // ここでデフォルトのContent-Typeを指定できる
+      // 例: "Content-Type": "application/json",
       ...(options?.headers || {}),
     },
   });
