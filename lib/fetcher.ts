@@ -1,9 +1,12 @@
+// 空のJSONオブジェクトを表す型
+export type EmptyJSON = Record<string, never>;
+
 /**
  * REST APIを呼び出す
  * "Content-Type": "application/json"はデフォルトで設定される(オプションで上書き可能)
  * @param url - APIエンドポイントのURL
- * @param options - Fetch APIオプション
- * @returns JSONレスポンスを解決する、またはエラーで拒否されるPromise
+ * @param options - Fetch APIオプション。
+ * @returns JSONレスポンスを解決する、またはエラーで拒否されるPromise。204 No Contentの場合はvoidを返す
  */
 export async function fetcher<T>(
   url: string,
@@ -21,5 +24,10 @@ export async function fetcher<T>(
     const errorBody = await res.text();
     throw new Error(`HTTP error! status: ${res.status}, body: ${errorBody}`);
   }
+
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   return res.json();
 }
