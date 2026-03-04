@@ -18,6 +18,5 @@
     "^[./]"
   ],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
-  "endOfLine": "crlf"
+  "importOrderSortSpecifiers": true
 }
