@@ -1,6 +1,7 @@
 import type { UserId } from "../common";
+import type { UserName } from "./common";
 
-export type StoreName = string;
+export type StoreName = UserName;
 export type StoreIconUrl = string;
 export type StoreIntroduction = string;
 export type StoreAddress = string;
