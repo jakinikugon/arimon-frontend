@@ -8,3 +8,5 @@ export type StoresMeItemsDetailsPatchRequest = Partial<
 >;
 
 export type StoresMeItemsDetailsPatchResponse = ItemDetailForStore;
+
+export type StoresMeItemsDetailsDeleteResponse = void;

@@ -2,6 +2,7 @@ export type {
   StoresMeGetResponse,
   StoresMePatchRequest,
   StoresMePatchResponse,
+  StoresMeDeleteResponse,
 } from "./me";
 export type { StoresMeReportsGetResponse } from "./me-reports";
 export type {
@@ -13,6 +14,7 @@ export type {
   StoresMeItemsDetailsGetResponse,
   StoresMeItemsDetailsPatchRequest,
   StoresMeItemsDetailsPatchResponse,
+  StoresMeItemsDetailsDeleteResponse,
 } from "./me-items-item-id";
 export type { StoresDetailsGetResponse } from "./store-id";
 export type { StoresDetailsItemsGetResponse } from "./store-id-items";

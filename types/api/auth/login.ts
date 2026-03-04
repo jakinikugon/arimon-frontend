@@ -4,3 +4,5 @@ export type AuthLoginPostRequest = {
   email: Email;
   password: Password;
 };
+
+export type AuthLoginPostResponse = void;
