@@ -5,6 +5,32 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* brand color */
+  --color-brand-main: var(--brand-main);
+  --color-brand-main-50: var(--brand-main-50);
+  --color-brand-main-100: var(--brand-main-100);
+  --color-brand-main-200: var(--brand-main-200);
+  --color-brand-main-300: var(--brand-main-300);
+  --color-brand-main-400: var(--brand-main-400);
+  --color-brand-main-500: var(--brand-main-500);
+  --color-brand-main-600: var(--brand-main-600);
+  --color-brand-main-700: var(--brand-main-700);
+  --color-brand-main-800: var(--brand-main-800);
+  --color-brand-main-900: var(--brand-main-900);
+
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-50: var(--brand-accent-50);
+  --color-brand-accent-100: var(--brand-accent-100);
+  --color-brand-accent-200: var(--brand-accent-200);
+  --color-brand-accent-300: var(--brand-accent-300);
+  --color-brand-accent-400: var(--brand-accent-400);
+  --color-brand-accent-500: var(--brand-accent-500);
+  --color-brand-accent-600: var(--brand-accent-600);
+  --color-brand-accent-700: var(--brand-accent-700);
+  --color-brand-accent-800: var(--brand-accent-800);
+  --color-brand-accent-900: var(--brand-accent-900);
+
+  /* shadcn */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(
@@ -50,6 +76,32 @@
 }
 
 :root {
+  /* brand color */
+  --brand-main-50: oklch(0.98 0.041 60.28);
+  --brand-main-100: oklch(0.962 0.091 60.28);
+  --brand-main-200: oklch(0.914 0.127 60.28);
+  --brand-main-300: oklch(0.844 0.151 60.28);
+  --brand-main-400: oklch(0.761 0.162 60.28);
+  --brand-main-500: oklch(0.673 0.162 60.28);
+  --brand-main-600: oklch(0.59 0.152 60.28);
+  --brand-main-700: oklch(0.52 0.133 60.28);
+  --brand-main-800: oklch(0.472 0.107 60.28);
+  --brand-main-900: oklch(0.454 0.073 60.28);
+  --brand-main: var(--brand-main-500);
+
+  --brand-accent-50: oklch(0.98 0.043 120.74);
+  --brand-accent-100: oklch(0.963 0.097 120.74);
+  --brand-accent-200: oklch(0.916 0.136 120.74);
+  --brand-accent-300: oklch(0.849 0.16 120.74);
+  --brand-accent-400: oklch(0.77 0.172 120.74);
+  --brand-accent-500: oklch(0.686 0.172 120.74);
+  --brand-accent-600: oklch(0.606 0.162 120.74);
+  --brand-accent-700: oklch(0.539 0.142 120.74);
+  --brand-accent-800: oklch(0.493 0.114 120.74);
+  --brand-accent-900: oklch(0.475 0.078 120.74);
+  --brand-accent: var(--brand-accent-500);
+
+  /* shadcn */
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
