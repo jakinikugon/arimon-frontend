@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* brand color   */
+  /* brand color */
   --color-brand-main: var(--brand-main);
   --color-brand-main-50: var(--brand-main-50);
   --color-brand-main-100: var(--brand-main-100);
