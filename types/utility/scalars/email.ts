@@ -1,3 +1,3 @@
-import type { Bland } from "../ts/helpers";
+import type { Brand } from "../ts/helpers";
 
-export type Email = Bland<string, "Email">;
+export type Email = Brand<string, "Email">;

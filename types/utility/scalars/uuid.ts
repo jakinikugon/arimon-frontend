@@ -1,3 +1,3 @@
-import type { Bland } from "../ts/helpers";
+import type { Brand } from "../ts/helpers";
 
-export type UUID = Bland<string, "UUID">;
+export type UUID = Brand<string, "UUID">;

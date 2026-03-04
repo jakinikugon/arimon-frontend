@@ -1,3 +1,3 @@
-import type { Bland } from "../ts/helpers";
+import type { Brand } from "../ts/helpers";
 
-export type JWT = Bland<string, "JWT">;
+export type JWT = Brand<string, "JWT">;
