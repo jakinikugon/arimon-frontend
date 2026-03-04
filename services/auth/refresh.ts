@@ -7,7 +7,7 @@ import { backendApiUrl } from "@/lib/api";
  * @returns 新しいアクセストークンを含むレスポンス
  */
 export async function authRefresh(): Promise<AuthRefreshPostResponse> {
-  const res = await fetch(backendApiUrl("/auth/refresh"), {
+  const res = await fetch(backendApiUrl("/api/auth/refresh"), {
     method: "POST",
     credentials: "include",
     headers: {
