@@ -21,5 +21,10 @@ export async function fetcher<T>(
     const errorBody = await res.text();
     throw new Error(`HTTP error! status: ${res.status}, body: ${errorBody}`);
   }
+
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   return res.json();
 }
