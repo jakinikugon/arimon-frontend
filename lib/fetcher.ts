@@ -5,8 +5,8 @@ export type EmptyJSON = Record<string, never>;
  * REST APIを呼び出す
  * "Content-Type": "application/json"はデフォルトで設定される(オプションで上書き可能)
  * @param url - APIエンドポイントのURL
- * @param options - Fetch APIオプション
- * @returns JSONレスポンスを解決する、またはエラーで拒否されるPromise
+ * @param options - Fetch APIオプション。
+ * @returns JSONレスポンスを解決する、またはエラーで拒否されるPromise。204 No Contentの場合はvoidを返す
  */
 export async function fetcher<T>(
   url: string,
