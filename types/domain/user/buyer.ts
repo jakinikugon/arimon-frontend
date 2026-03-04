@@ -1,6 +1,7 @@
 import type { UserId } from "../common";
+import type { UserName } from "./common";
 
-export type BuyerName = string;
+export type BuyerName = UserName;
 
 export type Allergen =
   | "egg"
