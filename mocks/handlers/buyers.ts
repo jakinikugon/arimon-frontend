@@ -116,7 +116,8 @@ export const buyersHandlers = [
   }),
 
   http.get("*/api/buyers/me/chat/recipes", () => {
-    const response: BuyersMeChatRecipesGetResponse = chat.messages[0].recipes ?? [];
+    const response: BuyersMeChatRecipesGetResponse =
+      chat.messages[0].recipes ?? [];
     return HttpResponse.json(response);
   }),
 ];
