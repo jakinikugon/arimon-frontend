@@ -6,28 +6,31 @@
  */
 import { toBoolean } from "@/utils/string";
 
-const required = (name: string): string => {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing env: ${name}`);
-  return v;
-};
+// 一応残しておく
+// const required = (name: string): string => {
+//   const v = process.env[name];
+//   if (v === undefined) throw new Error(`Missing env: ${name}`);
+//   return v ?? "";
+// };
 
-const optional = (name: string, defaultValue: string): string => {
-  const v = process.env[name];
-  return v ?? defaultValue;
-};
+// const optional = (name: string, defaultValue: string): string => {
+//   const v = process.env[name];
+//   return v ?? defaultValue;
+// };
 
+// process.env[name] だとundefinedになるため、上記の関数は使用できない？
+// 代わりに、EnvConfigオブジェクトを使用して環境変数を管理する
 export const EnvConfig = {
   meta: {
-    rootUrl: required("NEXT_PUBLIC_ROOT_URL"),
+    rootUrl: process.env.NEXT_PUBLIC_ROOT_URL ?? "",
   },
   api: {
-    backend: required("NEXT_PUBLIC_BACKEND_API_URL"),
-    mock: required("NEXT_PUBLIC_MOCK_API_URL"),
+    backend: process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "",
+    mock: process.env.NEXT_PUBLIC_MOCK_API_URL ?? "",
   },
   key: {},
   config: {
-    useMocks: toBoolean(optional("NEXT_PUBLIC_USE_MOCKS", "false")),
+    useMocks: toBoolean(process.env.NEXT_PUBLIC_USE_MOCKS ?? "false"),
   },
   env: {
     state: process.env.NODE_ENV,
@@ -38,6 +41,6 @@ export const EnvConfig = {
   util: {
     enableMocks:
       process.env.NODE_ENV === "development" &&
-      toBoolean(optional("NEXT_PUBLIC_USE_MOCKS", "false")),
+      toBoolean(process.env.NEXT_PUBLIC_USE_MOCKS ?? "false"),
   },
 } as const;
