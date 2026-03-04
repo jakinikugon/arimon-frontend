@@ -2,7 +2,6 @@ import type { AuthLoginPostRequest, AuthLoginPostResponse } from "@/types/api";
 import type { Email, Password } from "@/types/utility/scalars";
 
 import { backendApiUrl } from "@/lib/api";
-import { fetcher } from "@/lib/fetcher";
 
 export async function authLogin(email: Email, password: Password) {
   const body: AuthLoginPostRequest = {
@@ -10,7 +9,7 @@ export async function authLogin(email: Email, password: Password) {
     password,
   };
 
-  return fetcher<AuthLoginPostResponse>(backendApiUrl("/api/auth/login"), {
+  const res = await fetch(backendApiUrl("/api/auth/login"), {
     method: "POST",
     credentials: "include",
     headers: {
@@ -18,4 +17,12 @@ export async function authLogin(email: Email, password: Password) {
     },
     body: JSON.stringify(body),
   });
+
+  if (!res.ok) {
+    const errorBody = await res.text();
+    throw new Error(`HTTP error! status: ${res.status}, body: ${errorBody}`);
+  }
+
+  const data = (await res.json()) as AuthLoginPostResponse;
+  return data;
 }
