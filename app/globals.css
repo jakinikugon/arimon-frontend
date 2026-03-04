@@ -76,7 +76,7 @@
 }
 
 :root {
-  /* brand color   */
+  /* brand color */
   --brand-main-50: oklch(0.98 0.041 60.28);
   --brand-main-100: oklch(0.962 0.091 60.28);
   --brand-main-200: oklch(0.914 0.127 60.28);
