@@ -3,7 +3,10 @@ import type { Email, Password } from "@/types/utility/scalars";
 
 import { backendApiUrl } from "@/lib/api";
 
-export async function authLogin(email: Email, password: Password) {
+export async function authLogin(
+  email: Email,
+  password: Password,
+): Promise<AuthLoginPostResponse> {
   const body: AuthLoginPostRequest = {
     email,
     password,

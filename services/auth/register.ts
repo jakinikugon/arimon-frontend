@@ -11,7 +11,7 @@ export async function authRegister(
   email: Email,
   password: Password,
   accountType: AccountType,
-) {
+): Promise<AuthRegisterPostResponse> {
   const body: AuthRegisterPostRequest = {
     email,
     password,
