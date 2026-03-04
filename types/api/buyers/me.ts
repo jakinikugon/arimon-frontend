@@ -5,3 +5,5 @@ export type BuyersMeGetResponse = Buyer;
 export type BuyersMePatchRequest = Partial<BuyerSetting>;
 
 export type BuyersMePatchResponse = Buyer;
+
+export type BuyersMeDeleteResponse = void;

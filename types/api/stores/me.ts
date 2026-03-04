@@ -5,3 +5,5 @@ export type StoresMeGetResponse = Store;
 export type StoresMePatchRequest = Partial<StoreSetting>;
 
 export type StoresMePatchResponse = Store;
+
+export type StoresMeDeleteResponse = void;

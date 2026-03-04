@@ -2,5 +2,6 @@ export type {
   AuthRegisterPostRequest,
   AuthRegisterPostResponse,
 } from "./register";
-export type { AuthLoginPostRequest } from "./login";
+export type { AuthLoginPostRequest, AuthLoginPostResponse } from "./login";
+export type { AuthLogoutPostResponse } from "./logout";
 export type { AuthSessionGetResponse } from "./session";

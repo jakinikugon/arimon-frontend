@@ -2,6 +2,7 @@ export type {
   BuyersMeGetResponse,
   BuyersMePatchRequest,
   BuyersMePatchResponse,
+  BuyersMeDeleteResponse,
 } from "./me";
 export type {
   BuyersMeReportsGetResponse,
