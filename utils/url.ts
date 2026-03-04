@@ -10,3 +10,8 @@ export function joinUrl(base: string, path: string): string {
   const cleanPath = path.replace(/^\/+/, "");
   return `${cleanBase}/${cleanPath}`;
 }
+
+export function queryString(baseurl: string, query: Record<string, string>): string {
+  const params = new URLSearchParams(query).toString();
+  return `${baseurl}?${params}`;
+}
