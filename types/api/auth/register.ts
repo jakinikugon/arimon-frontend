@@ -1,13 +1,14 @@
 import type { AccountType, UserId } from "../../domain";
 import type { Email, Password } from "../../utility/scalars";
+import type { JWT } from "../../utility/scalars";
 
-type AuthRegisterPostRequest = {
+export type AuthRegisterPostRequest = {
   email: Email;
   password: Password;
   accountType: AccountType;
 };
 
-type AuthRegisterPostResponse = {
+export type AuthRegisterPostResponse = {
   userId: UserId;
   email: Email;
   accountType: AccountType;
