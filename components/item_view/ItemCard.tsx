@@ -6,12 +6,12 @@ import type { ItemId, ItemViewForBuyer } from "@/types/domain";
 
 import { formatYen } from "@/lib/formatter";
 
-interface ItemCardForBuyerProps {
+interface ItemCardProps {
   item: ItemViewForBuyer;
   onClick: (itemId: ItemId) => void;
 }
 
-export function ItemCard({ item, onClick }: ItemCardForBuyerProps) {
+export function ItemCard({ item, onClick }: ItemCardProps) {
   const hasDiscount = item.price.discount < item.price.regular;
 
   return (

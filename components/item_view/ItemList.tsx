@@ -7,11 +7,11 @@ import type { ItemId, ItemViewForBuyer } from "@/types/domain";
 import { ItemCard } from "./ItemCard";
 import { ItemDetailDialog } from "./ItemDetailDialog";
 
-interface ItemListForBuyerProps {
+interface ItemListProps {
   items: ItemViewForBuyer[];
 }
 
-export function ItemList({ items }: ItemListForBuyerProps) {
+export function ItemList({ items }: ItemListProps) {
   const [itemDetail, setItemDetail] = useState<ItemId | null>(null);
 
   return (
