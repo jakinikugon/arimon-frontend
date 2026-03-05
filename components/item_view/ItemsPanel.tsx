@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import type { ItemViewForBuyer } from "@/types/domain";
 
@@ -12,19 +14,77 @@ import { ItemList } from "./ItemList";
 import type { ItemSearchConditions } from "./Searchbox";
 import { Searchbox } from "./Searchbox";
 
-const DEFAULT_SEARCH_CONDITIONS: ItemSearchConditions = {
-  sort: "price-low",
-  priceMax: 3000,
-  q: undefined,
-};
+const DEFAULT_PRICE_MAX = 3000;
+
+function parseSort(raw: string | null): ItemSearchConditions["sort"] {
+  return raw === "price-high" ? "price-high" : "price-low";
+}
+
+function parsePriceMax(raw: string | null): number {
+  if (!raw) return DEFAULT_PRICE_MAX;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return DEFAULT_PRICE_MAX;
+  return Math.max(0, Math.floor(parsed));
+}
+
+function parseConditionsFromSearchParams(
+  searchParams: URLSearchParams,
+): ItemSearchConditions {
+  const q = searchParams.get("q")?.trim();
+
+  return {
+    q: q ? q : undefined,
+    priceMax: parsePriceMax(searchParams.get("price_max")),
+    sort: parseSort(searchParams.get("sort")),
+  };
+}
+
+function isSameConditions(
+  left: ItemSearchConditions,
+  right: ItemSearchConditions,
+): boolean {
+  return (
+    left.q === right.q &&
+    left.priceMax === right.priceMax &&
+    left.sort === right.sort
+  );
+}
 
 export function ItemsPanel() {
-  const [conditions, setConditions] = useState<ItemSearchConditions>(
-    DEFAULT_SEARCH_CONDITIONS,
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const parsedConditions = useMemo(
+    () => parseConditionsFromSearchParams(searchParams),
+    [searchParams],
   );
+  const [conditions, setConditions] =
+    useState<ItemSearchConditions>(parsedConditions);
   const [items, setItems] = useState<ItemViewForBuyer[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setConditions((prev) =>
+      isSameConditions(prev, parsedConditions) ? prev : parsedConditions,
+    );
+  }, [parsedConditions]);
+
+  const handleSearch = (nextConditions: ItemSearchConditions) => {
+    setConditions(nextConditions);
+
+    const nextParams = new URLSearchParams();
+    if (nextConditions.q !== undefined) {
+      nextParams.set("q", nextConditions.q);
+    }
+    if (nextConditions.priceMax !== undefined) {
+      nextParams.set("price_max", String(nextConditions.priceMax));
+    }
+    nextParams.set("sort", nextConditions.sort);
+
+    const query = nextParams.toString();
+    router.push(query ? `${pathname}?${query}` : pathname);
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -62,7 +122,7 @@ export function ItemsPanel() {
           sort: conditions.sort,
         }}
         isSubmitting={isLoading}
-        onSearch={setConditions}
+        onSearch={handleSearch}
       />
 
       {errorMessage && (
