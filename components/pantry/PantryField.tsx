@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { FiPlus } from "react-icons/fi";
+import { IoReload } from "react-icons/io5";
 
 import fridgeInteriorImage from "@/public/images/pantry/fridge-interior.png";
 import { Loader2, Trash2, XCircle } from "lucide-react";
@@ -467,11 +468,11 @@ export function PantryField() {
     <Card className="gap-4">
       <CardHeader className="gap-1">
         <CardTitle>冷蔵庫</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
         <CardDescription>
           棚の「+」からフォームを開き、食材を登録できます。
         </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
         <section className="space-y-3" aria-live="polite">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -488,8 +489,9 @@ export function PantryField() {
                 void loadPantry();
               }}
               disabled={isPantryLoading}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
             >
-              再読み込み
+              <IoReload />
             </Button>
           </div>
 

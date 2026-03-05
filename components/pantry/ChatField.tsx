@@ -156,7 +156,7 @@ function RecipeAccordion({ recipes, valuePrefix }: RecipeAccordionProps) {
                   >
                     <div className="flex items-start gap-2">
                       {material.inPantry ? (
-                        <CheckCircle2 className="mt-0.5 size-4 text-green-700" />
+                        <CheckCircle2 className="text-brand-accent-700 mt-0.5 size-4" />
                       ) : (
                         <XCircle className="mt-0.5 size-4 text-gray-500" />
                       )}
@@ -295,7 +295,7 @@ export function ChatField() {
   }, []);
 
   return (
-    <Card className="gap-4">
+    <Card className="border-brand-accent-200/70 via-background to-brand-accent-50/25 gap-4 from-white">
       <CardHeader className="gap-1">
         <CardTitle>献立サポート</CardTitle>
         <CardDescription>
@@ -304,9 +304,19 @@ export function ChatField() {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="chat">チャットBOT</TabsTrigger>
-            <TabsTrigger value="recipes">提案した献立履歴</TabsTrigger>
+          <TabsList className="bg-brand-main-50/70 grid w-full grid-cols-2">
+            <TabsTrigger
+              value="chat"
+              className="data-[state=active]:bg-brand-main-500 data-[state=active]:text-white"
+            >
+              チャットBOT
+            </TabsTrigger>
+            <TabsTrigger
+              value="recipes"
+              className="data-[state=active]:bg-brand-main-500 data-[state=active]:text-white"
+            >
+              提案した献立履歴
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="chat" className="mt-4 space-y-4">
@@ -320,7 +330,7 @@ export function ChatField() {
               />
             ) : null}
 
-            <ScrollArea className="h-80 rounded-md border p-3">
+            <ScrollArea className="border-brand-accent-200/70 h-80 rounded-md border bg-white/80 p-3">
               {isChatLoading ? (
                 <ChatListSkeleton />
               ) : chatMessages.length === 0 ? (
@@ -346,11 +356,11 @@ export function ChatField() {
                         key={`${message.role}-${index}`}
                         className="mr-auto max-w-[90%] space-y-2"
                       >
-                        <article className="bg-muted rounded-xl border px-3 py-2 text-sm leading-relaxed shadow-xs">
+                        <article className="border-brand-main-100 bg-brand-main-50/15 rounded-xl border px-3 py-2 text-sm leading-relaxed shadow-xs">
                           <p>{message.content}</p>
                         </article>
                         {message.recipes.length > 0 ? (
-                          <div className="rounded-xl border bg-white px-3 py-2">
+                          <div className="border-brand-accent-200/70 bg-brand-accent-50/15 rounded-xl border px-3 py-2">
                             <p className="text-muted-foreground mb-2 text-xs">
                               提案献立
                             </p>
@@ -376,12 +386,17 @@ export function ChatField() {
                   setChatInput(event.target.value);
                 }}
                 placeholder="例: 冷蔵庫にある食材で作れる夕飯を提案して"
+                className="focus-visible:border-brand-main-400 focus-visible:ring-brand-main-300/40"
                 disabled={isChatSubmitting}
               />
               {chatSubmitError ? (
                 <InlineError message={chatSubmitError} />
               ) : null}
-              <Button type="submit" disabled={!canSubmitChat}>
+              <Button
+                type="submit"
+                className="bg-brand-main-500 hover:bg-brand-main-600 text-white"
+                disabled={!canSubmitChat}
+              >
                 {isChatSubmitting ? (
                   <Loader2 className="mr-1 size-4 animate-spin" />
                 ) : null}
@@ -396,6 +411,7 @@ export function ChatField() {
                 type="button"
                 variant="ghost"
                 size="sm"
+                className="text-brand-accent-800 hover:bg-brand-accent-50"
                 onClick={() => {
                   void loadRecipeHistory();
                 }}
@@ -418,7 +434,7 @@ export function ChatField() {
             {isRecipeHistoryLoading ? (
               <RecipeListSkeleton />
             ) : recipeHistory.length === 0 ? (
-              <p className="text-muted-foreground rounded-md border border-dashed p-3 text-sm">
+              <p className="text-muted-foreground border-brand-accent-200/70 bg-brand-accent-50/30 rounded-md border border-dashed p-3 text-sm">
                 まだ献立提案の履歴がありません。
               </p>
             ) : (
