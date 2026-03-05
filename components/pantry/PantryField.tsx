@@ -70,13 +70,15 @@ const INITIAL_PANTRY_ADD_FORM: PantryAddForm = {
 };
 
 const PANTRY_ITEMS_PER_SHELF = 3;
+const FREEZER_ITEMS_PER_SHELF = 2;
+const DOOR_POCKET_SLOT_COUNT = 3;
 
 const PANTRY_CATEGORY_BADGE_STYLES = [
-  "border-emerald-200 bg-emerald-50 text-emerald-700",
-  "border-amber-200 bg-amber-50 text-amber-700",
-  "border-sky-200 bg-sky-50 text-sky-700",
-  "border-rose-200 bg-rose-50 text-rose-700",
-  "border-violet-200 bg-violet-50 text-violet-700",
+  "border-[rgba(16,185,129,0.35)] bg-[rgba(16,185,129,0.13)] text-[#047857]",
+  "border-[rgba(245,158,11,0.38)] bg-[rgba(245,158,11,0.16)] text-[#b45309]",
+  "border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.14)] text-[#0369a1]",
+  "border-[rgba(244,63,94,0.34)] bg-[rgba(244,63,94,0.13)] text-[#be123c]",
+  "border-[rgba(139,92,246,0.34)] bg-[rgba(139,92,246,0.13)] text-[#6d28d9]",
 ] as const;
 
 function chunkPantryItems(items: PantryItem[]): PantryItem[][] {
@@ -87,6 +89,33 @@ function chunkPantryItems(items: PantryItem[]): PantryItem[][] {
   }
 
   return shelves;
+}
+
+type FridgeLayout = {
+  freezerItems: PantryItem[];
+  shelfItems: PantryItem[][];
+  doorPocketItems: PantryItem[];
+};
+
+function buildFridgeLayout(items: PantryItem[]): FridgeLayout {
+  const doorPocketCount =
+    items.length >= 5
+      ? Math.min(DOOR_POCKET_SLOT_COUNT, Math.ceil(items.length / 4))
+      : 0;
+  const doorPocketItems =
+    doorPocketCount > 0 ? items.slice(-doorPocketCount) : [];
+  const mainCompartmentItems =
+    doorPocketCount > 0 ? items.slice(0, -doorPocketCount) : items;
+  const freezerItems = mainCompartmentItems.slice(0, FREEZER_ITEMS_PER_SHELF);
+  const shelfItems = chunkPantryItems(
+    mainCompartmentItems.slice(FREEZER_ITEMS_PER_SHELF),
+  );
+
+  return {
+    freezerItems,
+    shelfItems,
+    doorPocketItems,
+  };
 }
 
 function getCategoryBadgeStyle(category: string): string {
@@ -134,11 +163,82 @@ function InlineError({
 
 function PantryListSkeleton() {
   return (
-    <div className="space-y-2">
-      <Skeleton className="h-16 w-full" />
-      <Skeleton className="h-16 w-full" />
-      <Skeleton className="h-16 w-full" />
+    <div className="rounded-[1.75rem] border border-[rgba(34,211,238,0.42)] bg-[linear-gradient(180deg,rgba(236,254,255,0.95)_0%,rgba(255,255,255,0.94)_52%,rgba(224,242,254,0.9)_100%)] p-4">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
+        <div className="space-y-3">
+          <Skeleton className="h-16 w-full rounded-xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-16 w-full rounded-xl" />
+          <Skeleton className="h-16 w-full rounded-xl" />
+          <Skeleton className="h-16 w-full rounded-xl" />
+        </div>
+      </div>
     </div>
+  );
+}
+
+type PantryChipProps = {
+  item: PantryItem;
+  compact?: boolean;
+  isDeleting: boolean;
+  disableDelete: boolean;
+  onDelete: (pantryItemId: PantryItemId) => void;
+};
+
+function PantryChip({
+  item,
+  compact = false,
+  isDeleting,
+  disableDelete,
+  onDelete,
+}: PantryChipProps) {
+  return (
+    <li
+      className={cn(
+        "group flex min-h-16 items-start justify-between gap-2 rounded-lg border border-[rgba(255,255,255,0.8)] bg-[rgba(255,255,255,0.9)] p-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+        compact ? "min-h-14 p-2" : "p-2.5",
+      )}
+    >
+      <div className="min-w-0 space-y-1">
+        <p
+          className={cn(
+            "truncate font-semibold text-[#334155]",
+            compact ? "text-xs" : "text-sm",
+          )}
+        >
+          {item.name}
+        </p>
+        <span
+          className={cn(
+            "inline-flex items-center rounded-full border px-1.5 py-0.5 font-medium",
+            compact ? "text-[10px]" : "text-[11px]",
+            getCategoryBadgeStyle(item.category),
+          )}
+        >
+          {item.category}
+        </span>
+      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        className="text-[#dc2626] hover:bg-[rgba(254,226,226,0.9)] hover:text-[#b91c1c]"
+        onClick={() => {
+          onDelete(item.id);
+        }}
+        aria-label={`${item.name}を削除`}
+        disabled={isDeleting || disableDelete}
+      >
+        {isDeleting ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <Trash2 className="size-4" />
+        )}
+      </Button>
+    </li>
   );
 }
 
@@ -347,9 +447,26 @@ export function PantryField() {
     addForm.name.trim().length > 0 &&
     addForm.category.trim().length > 0;
 
-  const pantryShelves = useMemo(() => {
-    return chunkPantryItems(pantryItems);
+  const fridgeLayout = useMemo(() => {
+    return buildFridgeLayout(pantryItems);
   }, [pantryItems]);
+
+  const visibleShelfItems = useMemo(() => {
+    const shelves =
+      fridgeLayout.shelfItems.length > 0 ? [...fridgeLayout.shelfItems] : [[]];
+
+    while (shelves.length < 2) {
+      shelves.push([]);
+    }
+
+    return shelves;
+  }, [fridgeLayout.shelfItems]);
+
+  const doorPocketSlots = useMemo(() => {
+    return Array.from({ length: DOOR_POCKET_SLOT_COUNT }, (_, index) => {
+      return fridgeLayout.doorPocketItems[index] ?? null;
+    });
+  }, [fridgeLayout.doorPocketItems]);
 
   return (
     <Card className="gap-4">
@@ -590,70 +707,105 @@ export function PantryField() {
           {isPantryLoading ? (
             <PantryListSkeleton />
           ) : pantryItems.length === 0 ? (
-            <p className="text-muted-foreground rounded-md border border-dashed p-3 text-sm">
-              まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。
-            </p>
+            <div className="rounded-[1.75rem] border border-[rgba(34,211,238,0.4)] bg-[linear-gradient(180deg,rgba(236,254,255,0.95)_0%,rgba(255,255,255,0.94)_52%,rgba(224,242,254,0.86)_100%)] p-4 text-sm">
+              <div className="rounded-2xl border border-dashed border-[rgba(6,182,212,0.45)] bg-[rgba(255,255,255,0.76)] px-4 py-6 text-center">
+                <p className="text-muted-foreground">
+                  まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。
+                </p>
+              </div>
+            </div>
           ) : (
-            <div className="relative overflow-hidden rounded-2xl border border-cyan-200/70 bg-gradient-to-b from-cyan-50 via-white to-sky-100/60 p-4 shadow-inner">
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-cyan-200/40 to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-3 bg-gradient-to-l from-cyan-200/40 to-transparent" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-[rgba(34,211,238,0.46)] bg-[linear-gradient(180deg,rgba(224,242,254,0.92)_0%,rgba(255,255,255,0.94)_48%,rgba(207,250,254,0.88)_100%)] p-3 shadow-inner sm:p-4">
+              <div className="pointer-events-none absolute inset-y-2 left-2 w-4 rounded-full bg-[linear-gradient(90deg,rgba(34,211,238,0.4)_0%,rgba(34,211,238,0)_100%)]" />
+              <div className="pointer-events-none absolute inset-y-2 right-2 w-4 rounded-full bg-[linear-gradient(270deg,rgba(34,211,238,0.4)_0%,rgba(34,211,238,0)_100%)]" />
 
-              <div className="relative space-y-4">
-                {pantryShelves.map((shelf, shelfIndex) => (
-                  <div key={`shelf-${shelfIndex}`} className="space-y-2">
-                    <p className="text-muted-foreground text-[11px] font-medium">
-                      棚 {shelfIndex + 1}
+              <div className="relative grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
+                <div className="space-y-3 rounded-2xl border border-[rgba(255,255,255,0.8)] bg-[rgba(255,255,255,0.56)] p-3 shadow-inner">
+                  <div className="rounded-xl border border-[rgba(14,165,233,0.36)] bg-[rgba(186,230,253,0.62)]">
+                    <p className="px-3 py-1 text-[11px] font-semibold tracking-wide text-[#0369a1]">
+                      冷凍室
                     </p>
-                    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                      {shelf.map((item) => {
-                        const isDeleting = deletingPantryItemId === item.id;
+                    <div className="h-px bg-[rgba(14,165,233,0.26)]" />
+                    <ul className="grid min-h-16 grid-cols-2 gap-2 p-2">
+                      {fridgeLayout.freezerItems.length > 0 ? (
+                        fridgeLayout.freezerItems.map((item) => (
+                          <PantryChip
+                            key={item.id}
+                            item={item}
+                            compact
+                            isDeleting={deletingPantryItemId === item.id}
+                            disableDelete={deletingPantryItemId !== null}
+                            onDelete={(pantryItemId) => {
+                              void handleDeletePantryItem(pantryItemId);
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <li className="col-span-2 rounded-md border border-dashed border-[rgba(14,165,233,0.28)] bg-[rgba(255,255,255,0.72)] px-2 py-3 text-center text-[11px] text-[#64748b]">
+                          食材がありません
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+
+                  {visibleShelfItems.map((shelf, shelfIndex) => (
+                    <div key={`shelf-${shelfIndex}`} className="space-y-2">
+                      <ul className="grid gap-2 sm:grid-cols-2">
+                        {shelf.length > 0 ? (
+                          shelf.map((item) => (
+                            <PantryChip
+                              key={item.id}
+                              item={item}
+                              isDeleting={deletingPantryItemId === item.id}
+                              disableDelete={deletingPantryItemId !== null}
+                              onDelete={(pantryItemId) => {
+                                void handleDeletePantryItem(pantryItemId);
+                              }}
+                            />
+                          ))
+                        ) : (
+                          <li className="rounded-md border border-dashed border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.68)] px-2 py-3 text-center text-xs text-[#64748b] sm:col-span-2">
+                            食材がありません
+                          </li>
+                        )}
+                      </ul>
+                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-[inset_0_1px_2px_rgba(148,163,184,0.55)]" />
+                    </div>
+                  ))}
+                </div>
+
+                <aside className="space-y-2 rounded-2xl border border-[rgba(6,182,212,0.35)] bg-[rgba(236,254,255,0.72)] p-2">
+                  <p className="px-1 text-[11px] font-semibold tracking-wide text-[#0e7490]">
+                    ドアポケット
+                  </p>
+                  <ul className="space-y-2">
+                    {doorPocketSlots.map((item, index) => {
+                      if (!item) {
                         return (
                           <li
-                            key={item.id}
-                            className="group flex min-h-28 flex-col justify-between rounded-xl border border-white/70 bg-white/80 p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                            key={`door-pocket-empty-${index}`}
+                            className="flex min-h-16 items-center justify-center rounded-lg border border-dashed border-[rgba(6,182,212,0.28)] bg-[rgba(255,255,255,0.8)] px-2 py-3 text-[11px] text-[#64748b]"
                           >
-                            <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm leading-snug font-semibold">
-                                {item.name}
-                              </p>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-sm"
-                                className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                                onClick={() => {
-                                  void handleDeletePantryItem(item.id);
-                                }}
-                                aria-label={`${item.name}を削除`}
-                                disabled={
-                                  isDeleting || deletingPantryItemId !== null
-                                }
-                              >
-                                {isDeleting ? (
-                                  <Loader2 className="size-4 animate-spin" />
-                                ) : (
-                                  <Trash2 className="size-4" />
-                                )}
-                              </Button>
-                            </div>
-
-                            <div className="mt-3 space-y-2">
-                              <span
-                                className={cn(
-                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
-                                  getCategoryBadgeStyle(item.category),
-                                )}
-                              >
-                                {item.category}
-                              </span>
-                            </div>
+                            空き
                           </li>
                         );
-                      })}
-                    </ul>
-                    <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
-                  </div>
-                ))}
+                      }
+
+                      return (
+                        <PantryChip
+                          key={item.id}
+                          item={item}
+                          compact
+                          isDeleting={deletingPantryItemId === item.id}
+                          disableDelete={deletingPantryItemId !== null}
+                          onDelete={(pantryItemId) => {
+                            void handleDeletePantryItem(pantryItemId);
+                          }}
+                        />
+                      );
+                    })}
+                  </ul>
+                </aside>
               </div>
             </div>
           )}
