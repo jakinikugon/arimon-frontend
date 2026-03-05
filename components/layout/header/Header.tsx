@@ -23,7 +23,7 @@ export function Header() {
         setIsLogin(true);
         setUserName(res.userName);
       } catch {
-        setIsLogin(true);
+        setIsLogin(false);
         setUserName(null);
       }
     };
