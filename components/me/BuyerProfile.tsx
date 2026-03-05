@@ -9,7 +9,6 @@ import type { Buyer, Reports } from "@/types/domain";
 
 import { logout } from "@/lib/auth/logout";
 
-import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { SquareMove2 } from "@/components/loader";
 import { LogoutButton } from "@/components/me/container/LogoutButton";
 
@@ -88,7 +87,7 @@ export function BuyerProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
       {loading ? (
         <div className="flex flex-col items-center gap-3 py-10">
           <SquareMove2 color="var(--color-gray-300)" size="2rem" />
@@ -130,7 +129,6 @@ export function BuyerProfile() {
           </p>
         </div>
       )}
-      <BottomNavigation currentPage="profile" />
     </div>
   );
 }

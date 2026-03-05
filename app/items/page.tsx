@@ -3,11 +3,11 @@ import { BottomNavigation } from "@/components/layout/BottomNavigation";
 
 export default function ItemsPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="mx-2 max-w-4xl">
+    <>
+      <main className="mx-2 max-w-4xl pb-24">
         <ItemsPanel />
-      </div>
+      </main>
       <BottomNavigation currentPage="items" />
-    </div>
+    </>
   );
 }

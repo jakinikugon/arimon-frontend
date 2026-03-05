@@ -4,7 +4,9 @@ import { PantryPage } from "@/components/pantry";
 export default function PantryRoute() {
   return (
     <>
-      <PantryPage />
+      <main className="pb-24">
+        <PantryPage />
+      </main>
       <BottomNavigation currentPage="pantry" />
     </>
   );
