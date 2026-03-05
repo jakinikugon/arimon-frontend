@@ -39,7 +39,7 @@ import {
   localGetBuyersMeChatMessages as getBuyersMeChatMessages,
   localGetBuyersMeChatRecipes as getBuyersMeChatRecipes,
   localPostBuyersMeChatMessages as postBuyersMeChatMessages,
-} from "./localMockApi";
+} from "../../mocks/simple/localMockApi";
 
 // import {
 //   getBuyersMeChatMessages,

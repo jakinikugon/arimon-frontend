@@ -39,7 +39,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
 import {
   localDeleteBuyersMePantry as deleteBuyersMePantry,
   localGetBuyersMePantry as getBuyersMePantry,
@@ -47,7 +46,8 @@ import {
   localGetJan as getJan,
   localGetPantrySuggestionsQuery as getPantrySuggestionsQuery,
   localPostBuyersMePantry as postBuyersMePantry,
-} from "./localMockApi";
+} from "../../mocks/simple/localMockApi";
+import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
 
 // import {
 //   deleteBuyersMePantry,
