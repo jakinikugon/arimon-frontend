@@ -11,7 +11,6 @@ import {
 import { FiPlus } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
-import fridgeInteriorImage from "@/public/images/pantry/fridge-interior.png";
 import { Loader2, Trash2, XCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -510,8 +509,8 @@ export function PantryField() {
           ) : (
             <div className="relative overflow-hidden rounded-[1.75rem] border border-cyan-400/45 shadow-inner">
               <Image
-                src={fridgeInteriorImage}
-                alt=""
+                src="/images/pantry/fridge-interior.png"
+                alt="冷蔵庫の画像"
                 fill
                 sizes="(min-width: 768px) 768px, 100vw"
                 className="pointer-events-none object-cover select-none"
@@ -760,3 +759,4 @@ export function PantryField() {
     </Card>
   );
 }
+
