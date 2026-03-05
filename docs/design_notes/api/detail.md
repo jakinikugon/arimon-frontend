@@ -15,7 +15,7 @@ type OmitId<T> = Omit<T, "id">;
 // 汎用的な型定義
 type UUID = string; // UUID v4 形式の文字列
 type URL = string; // URL の文字列
-type Timestamp = string; // ISO 8601 形式の日時文字列
+type Timestamp = string; // RFC 3339 形式の日時文字列
 type JanCode = string; // JAN コードの文字列
 type Email = string; // メールアドレスの文字列
 type Password = string; // パスワードの文字列
@@ -243,7 +243,7 @@ type Reports = {
 - リフレッシュトークン
   - TTL: 7日
   - 用途: アクセストークンの再発行
-  - リフレッシュ成功時にリフレッシュトークンは新しいものに上書きされる
+  - リフレッシュ成功時: 古いリフレッシュトークンを無効化して、新規トークンを生成
 - 認証できない・アクセストークン切れのときは 401 を返す
   - 401 が返されたら `POST /api/auth/refresh` して、元の API を再試行
     - refresh も 401 が返ってきたらログイン画面にリダイレクトとかでいいと思う
@@ -364,8 +364,10 @@ Set-Cookie: refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Sec
 #### POST `/api/auth/logout`
 
 - ログアウト
-  - リフレッシュトークンを失効する処理
-  - DB 設計: 古いリフレッシュトークンは削除する
+  - ログインしているユーザーが有効なリフレッシュトークンを全て失効する処理
+    - 現在の端末に保存されているリフレッシュトークンのみを無効化する場合、
+      現在有効な全てのリフレッシュトークンを無効化する機能を実装する必要があり手間
+  - DB 設計: 古いリフレッシュトークンは無効化する
 - レスポンスは空
 - `Authorization: Bearer` のヘッダはなくていい
 
@@ -384,6 +386,7 @@ Set-Cookie: refresh_token=; HttpOnly; Secure; SameSite=Lax; Path=/api/auth/refre
 ```ts
 type AuthSessionGetResponse = {
   userId: UserId;
+  userName: BuyerName | StoreName;
   accountType: AccountType;
 };
 ```
@@ -394,9 +397,12 @@ type AuthSessionGetResponse = {
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
+レスポンス
+
 ```json
 {
   "userId": "123e4567-e89b-12d3-a456-426614174000",
+  "userName": "ほげ",
   "accountType": "buyer"
 }
 ```
@@ -962,9 +968,10 @@ type StoresDetailsItemsGetResponse = ItemViewForBuyer[];
 #### GET `/api/items?{query}`
 
 - 出品物の検索・一覧の取得
+  - 冷蔵庫の検索ではない、冷蔵庫の検索は実装しない
 - クエリパラメータは以下に示す条件を想定
   - `q`: 商品名や説明文に対するキーワード検索
-  - `category`: カテゴリIDでの絞り込み
+  - `category`: カテゴリ名での絞り込み
   - `price_max` / `price_min`: 価格（割引後・売値）の範囲指定
     - 検索条件に通常価格は扱わないのでこの命名で OK
   - `sort`: 並び替えの指定（"price-low" or "price-high"）
@@ -1035,6 +1042,7 @@ type ItemsDetailsGetResponse = ItemDetailForBuyer;
 - 冷蔵庫食材名の補完候補の取得
 - クエリパラメータは `q` を想定(例: `q=牛` など)
 - レスポンスは以下のような形式
+- DB 向け情報: categories で検索する
 - 関数名：GetPantrySuggestionsQuery
 
 ```ts
@@ -1067,6 +1075,10 @@ type CategoriesGetResponse = ItemCategory[];
 
 - JANコードから商品情報の取得
 - 関数名：GetJan
+- バックエンド向け情報
+  - 1. DB を調べる、なければ 2. へ
+  - 2. 外部 API を叩く、なければ 3. へ
+  - 3. 404 No Content （ボディーは無し）を返す
 
 ```ts
 type JanGetResponse = {
@@ -1088,6 +1100,8 @@ type JanGetResponse = {
 
 - 画像のアップロード
 - リクエストは multipart/form-data で画像ファイルを送信
+  -- 配信は認可不要の public で行われるので API は用意しない（URL で直アクセス）
+- 拡張子: jpg|jpeg|png|gif|webp|bmp|heif|heic
 - 関数名：PostUploadImage
 
 ```ts
