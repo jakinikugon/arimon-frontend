@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
 
@@ -78,14 +80,22 @@ export function Searchbox({
   isSubmitting = false,
   onSearch,
 }: SearchboxProps) {
-  const form = useForm<SearchboxFormValues>({
-    resolver: zodResolver(searchboxSchema),
-    defaultValues: {
+  const mergedDefaultValues: SearchboxFormValues = useMemo(
+    () => ({
       ...SEARCHBOX_DEFAULT_VALUES,
       ...defaultValues,
-    },
+    }),
+    [defaultValues],
+  );
+  const form = useForm<SearchboxFormValues>({
+    resolver: zodResolver(searchboxSchema),
+    defaultValues: mergedDefaultValues,
   });
   const priceMax = useWatch({ control: form.control, name: "priceMax" });
+
+  useEffect(() => {
+    form.reset(mergedDefaultValues);
+  }, [form, mergedDefaultValues]);
 
   const handleSubmit = form.handleSubmit((values) => {
     onSearch({
