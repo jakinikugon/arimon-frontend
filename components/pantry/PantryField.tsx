@@ -74,11 +74,11 @@ const FREEZER_ITEMS_PER_SHELF = 2;
 const DOOR_POCKET_SLOT_COUNT = 3;
 
 const PANTRY_CATEGORY_BADGE_STYLES = [
-  "border-[rgba(16,185,129,0.35)] bg-[rgba(16,185,129,0.13)] text-[#047857]",
-  "border-[rgba(245,158,11,0.38)] bg-[rgba(245,158,11,0.16)] text-[#b45309]",
-  "border-[rgba(14,165,233,0.35)] bg-[rgba(14,165,233,0.14)] text-[#0369a1]",
-  "border-[rgba(244,63,94,0.34)] bg-[rgba(244,63,94,0.13)] text-[#be123c]",
-  "border-[rgba(139,92,246,0.34)] bg-[rgba(139,92,246,0.13)] text-[#6d28d9]",
+  "border-emerald-500/35 bg-emerald-500/15 text-emerald-700",
+  "border-amber-500/40 bg-amber-500/15 text-amber-700",
+  "border-sky-500/35 bg-sky-500/15 text-sky-700",
+  "border-rose-500/35 bg-rose-500/15 text-rose-700",
+  "border-violet-500/35 bg-violet-500/15 text-violet-700",
 ] as const;
 
 function chunkPantryItems(items: PantryItem[]): PantryItem[][] {
@@ -163,7 +163,7 @@ function InlineError({
 
 function PantryListSkeleton() {
   return (
-    <div className="rounded-[1.75rem] border border-[rgba(34,211,238,0.42)] bg-[linear-gradient(180deg,rgba(236,254,255,0.95)_0%,rgba(255,255,255,0.94)_52%,rgba(224,242,254,0.9)_100%)] p-4">
+    <div className="rounded-[1.75rem] border border-cyan-400/40 bg-gradient-to-b from-cyan-50/95 via-white/95 to-sky-100/90 p-4">
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
         <div className="space-y-3">
           <Skeleton className="h-16 w-full rounded-xl" />
@@ -198,14 +198,14 @@ function PantryChip({
   return (
     <li
       className={cn(
-        "group flex min-h-16 items-start justify-between gap-2 rounded-lg border border-[rgba(255,255,255,0.8)] bg-[rgba(255,255,255,0.9)] p-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+        "group flex min-h-16 items-start justify-between gap-2 rounded-lg border border-white/80 bg-white/90 p-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
         compact ? "min-h-14 p-2" : "p-2.5",
       )}
     >
       <div className="min-w-0 space-y-1">
         <p
           className={cn(
-            "truncate font-semibold text-[#334155]",
+            "truncate font-semibold text-slate-700",
             compact ? "text-xs" : "text-sm",
           )}
         >
@@ -225,7 +225,7 @@ function PantryChip({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className="text-[#dc2626] hover:bg-[rgba(254,226,226,0.9)] hover:text-[#b91c1c]"
+        className="text-red-600 hover:bg-red-100/90 hover:text-red-700"
         onClick={() => {
           onDelete(item.id);
         }}
@@ -707,25 +707,25 @@ export function PantryField() {
           {isPantryLoading ? (
             <PantryListSkeleton />
           ) : pantryItems.length === 0 ? (
-            <div className="rounded-[1.75rem] border border-[rgba(34,211,238,0.4)] bg-[linear-gradient(180deg,rgba(236,254,255,0.95)_0%,rgba(255,255,255,0.94)_52%,rgba(224,242,254,0.86)_100%)] p-4 text-sm">
-              <div className="rounded-2xl border border-dashed border-[rgba(6,182,212,0.45)] bg-[rgba(255,255,255,0.76)] px-4 py-6 text-center">
+            <div className="rounded-[1.75rem] border border-cyan-400/40 bg-gradient-to-b from-cyan-50/95 via-white/95 to-sky-100/85 p-4 text-sm">
+              <div className="rounded-2xl border border-dashed border-cyan-500/45 bg-white/75 px-4 py-6 text-center">
                 <p className="text-muted-foreground">
                   まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。
                 </p>
               </div>
             </div>
           ) : (
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-[rgba(34,211,238,0.46)] bg-[linear-gradient(180deg,rgba(224,242,254,0.92)_0%,rgba(255,255,255,0.94)_48%,rgba(207,250,254,0.88)_100%)] p-3 shadow-inner sm:p-4">
-              <div className="pointer-events-none absolute inset-y-2 left-2 w-4 rounded-full bg-[linear-gradient(90deg,rgba(34,211,238,0.4)_0%,rgba(34,211,238,0)_100%)]" />
-              <div className="pointer-events-none absolute inset-y-2 right-2 w-4 rounded-full bg-[linear-gradient(270deg,rgba(34,211,238,0.4)_0%,rgba(34,211,238,0)_100%)]" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-cyan-400/45 bg-gradient-to-b from-sky-100/90 via-white/95 to-cyan-100/90 p-3 shadow-inner sm:p-4">
+              <div className="pointer-events-none absolute inset-y-2 left-2 w-4 rounded-full bg-gradient-to-r from-cyan-400/40 to-transparent" />
+              <div className="pointer-events-none absolute inset-y-2 right-2 w-4 rounded-full bg-gradient-to-l from-cyan-400/40 to-transparent" />
 
               <div className="relative grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
-                <div className="space-y-3 rounded-2xl border border-[rgba(255,255,255,0.8)] bg-[rgba(255,255,255,0.56)] p-3 shadow-inner">
-                  <div className="rounded-xl border border-[rgba(14,165,233,0.36)] bg-[rgba(186,230,253,0.62)]">
-                    <p className="px-3 py-1 text-[11px] font-semibold tracking-wide text-[#0369a1]">
+                <div className="space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
+                  <div className="rounded-xl border border-sky-500/35 bg-sky-200/60">
+                    <p className="px-3 py-1 text-[11px] font-semibold tracking-wide text-sky-700">
                       冷凍室
                     </p>
-                    <div className="h-px bg-[rgba(14,165,233,0.26)]" />
+                    <div className="h-px bg-sky-500/25" />
                     <ul className="grid min-h-16 grid-cols-2 gap-2 p-2">
                       {fridgeLayout.freezerItems.length > 0 ? (
                         fridgeLayout.freezerItems.map((item) => (
@@ -741,7 +741,7 @@ export function PantryField() {
                           />
                         ))
                       ) : (
-                        <li className="col-span-2 rounded-md border border-dashed border-[rgba(14,165,233,0.28)] bg-[rgba(255,255,255,0.72)] px-2 py-3 text-center text-[11px] text-[#64748b]">
+                        <li className="col-span-2 rounded-md border border-dashed border-sky-500/30 bg-white/70 px-2 py-3 text-center text-[11px] text-slate-500">
                           食材がありません
                         </li>
                       )}
@@ -764,18 +764,18 @@ export function PantryField() {
                             />
                           ))
                         ) : (
-                          <li className="rounded-md border border-dashed border-[rgba(148,163,184,0.35)] bg-[rgba(255,255,255,0.68)] px-2 py-3 text-center text-xs text-[#64748b] sm:col-span-2">
+                          <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2">
                             食材がありません
                           </li>
                         )}
                       </ul>
-                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-[inset_0_1px_2px_rgba(148,163,184,0.55)]" />
+                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
                     </div>
                   ))}
                 </div>
 
-                <aside className="space-y-2 rounded-2xl border border-[rgba(6,182,212,0.35)] bg-[rgba(236,254,255,0.72)] p-2">
-                  <p className="px-1 text-[11px] font-semibold tracking-wide text-[#0e7490]">
+                <aside className="space-y-2 rounded-2xl border border-cyan-500/35 bg-cyan-50/70 p-2">
+                  <p className="px-1 text-[11px] font-semibold tracking-wide text-cyan-700">
                     ドアポケット
                   </p>
                   <ul className="space-y-2">
@@ -784,7 +784,7 @@ export function PantryField() {
                         return (
                           <li
                             key={`door-pocket-empty-${index}`}
-                            className="flex min-h-16 items-center justify-center rounded-lg border border-dashed border-[rgba(6,182,212,0.28)] bg-[rgba(255,255,255,0.8)] px-2 py-3 text-[11px] text-[#64748b]"
+                            className="flex min-h-16 items-center justify-center rounded-lg border border-dashed border-cyan-500/30 bg-white/80 px-2 py-3 text-[11px] text-slate-500"
                           >
                             空き
                           </li>
