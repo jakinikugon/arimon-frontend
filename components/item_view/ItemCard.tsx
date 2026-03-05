@@ -11,7 +11,7 @@ interface ItemCardForBuyerProps {
   onClick: (itemId: ItemId) => void;
 }
 
-export function ItemCardForBuyer({ item, onClick }: ItemCardForBuyerProps) {
+export function ItemCard({ item, onClick }: ItemCardForBuyerProps) {
   const hasDiscount = item.price.discount < item.price.regular;
 
   return (
