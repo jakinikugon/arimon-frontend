@@ -46,8 +46,8 @@ interface NavLinkProps {
 
 function NavLink({ href, icon, label, isActive, isCenter }: NavLinkProps) {
   const baseClass = isCenter
-    ? "-mt-5 flex h-18 w-18 flex-col items-center justify-center gap-1 rounded-full bg-brand-main-400 text-white shadow-lg transition-all duration-200"
-    : `flex w-12 flex-col items-center justify-center gap-1 ${isActive ? "text-brand-main-400" : "text-gray-500"}`;
+    ? "-mt-5 flex h-18 w-18 flex-col items-center justify-center gap-0.5 rounded-full bg-brand-main-400 text-white shadow-lg transition-all duration-200"
+    : `flex w-12 flex-col items-center justify-center gap-0.5 ${isActive ? "text-brand-main-400" : "text-gray-500"}`;
 
   return (
     <Link href={href} className={baseClass}>
@@ -64,7 +64,7 @@ interface BottomNavigationProps {
 function BottomNavigation({ currentPage }: BottomNavigationProps) {
   return (
     <nav
-      className="glass fixed bottom-2 left-1/2 z-50 w-[90%] max-w-lg -translate-x-1/2 rounded-full p-3"
+      className="glass fixed bottom-2 left-1/2 z-50 w-[90%] max-w-lg -translate-x-1/2 rounded-full p-1"
       role="navigation"
       aria-label="メインナビゲーション"
     >
