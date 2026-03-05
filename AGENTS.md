@@ -33,7 +33,7 @@
 1. `docs/design_notes/api/detail.md`
 2. `docs/design_notes/api/endpoint.md`
 3. `docs/design_notes/api/sql_schema.md`
-   
+
 ---
 
 ## 4. MVP 画面/機能の要点（設計資料準拠）
@@ -99,4 +99,3 @@
 失敗がある場合は、原因と影響範囲を明記する。
 
 ---
-
