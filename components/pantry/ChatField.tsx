@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { IoReload } from "react-icons/io5";
 
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
@@ -411,13 +412,15 @@ export function ChatField() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="text-brand-accent-800 hover:bg-brand-accent-50"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
                 onClick={() => {
                   void loadRecipeHistory();
                 }}
                 disabled={isRecipeHistoryLoading}
+                aria-label="履歴を更新"
+                title="履歴を更新"
               >
-                履歴を更新
+                <IoReload />
               </Button>
             </div>
 
