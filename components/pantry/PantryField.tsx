@@ -646,9 +646,6 @@ export function PantryField() {
                               >
                                 {item.category}
                               </span>
-                              <p className="text-muted-foreground text-[11px]">
-                                JAN: {item.janCode ?? "未設定"}
-                              </p>
                             </div>
                           </li>
                         );
