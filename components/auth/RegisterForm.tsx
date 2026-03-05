@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -43,7 +43,10 @@ export function RegisterForm() {
     },
   });
 
-  const accountType = form.watch("accountType");
+  const accountType = useWatch({
+    control: form.control,
+    name: "accountType",
+  });
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
