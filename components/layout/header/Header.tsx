@@ -13,7 +13,9 @@ import { AccountField } from "./AccountField";
 import { LoginButton } from "./LoginButton";
 
 export function Header() {
-  const [isSessionChecked, setIsSessionChecked] = useState(false);
+  const [isSessionChecked, setIsSessionChecked] = useState<boolean | null>(
+    null,
+  );
   const [userName, setUserName] = useState<UserName | null>(null);
 
   useEffect(() => {
@@ -43,10 +45,13 @@ export function Header() {
             className="mr-3 -mb-2"
           />
         </Link>
-        {isSessionChecked ? (
+        {isSessionChecked === true ? (
           <AccountField userName={userName} />
-        ) : (
+        ) : isSessionChecked === false ? (
           <LoginButton />
+        ) : (
+          <div />
+          // セッションの確認中は何も表示しない（ちらつき防止）
         )}
       </div>
     </header>
