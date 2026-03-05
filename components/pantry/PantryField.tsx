@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
@@ -142,15 +141,12 @@ function PantryListSkeleton() {
       <div className="space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
         <div className="space-y-2">
           <Skeleton className="h-16 w-full rounded-xl" />
-          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
         </div>
         <div className="space-y-2">
           <Skeleton className="h-24 w-full rounded-xl" />
-          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
         </div>
         <div className="space-y-2">
           <Skeleton className="h-24 w-full rounded-xl" />
-          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
         </div>
       </div>
     </div>
@@ -687,36 +683,33 @@ export function PantryField() {
               />
               <div className="pointer-events-none absolute inset-0 bg-white/20" />
 
-              <ScrollArea className="relative h-[30rem]">
-                <div className="space-y-3 p-4 sm:p-5">
-                  {visibleShelfItems.map((shelf, shelfIndex) => (
-                    <div key={`shelf-${shelfIndex}`} className="space-y-2">
-                      <ul className="grid min-h-24 content-start gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                        {shelf.length > 0 ? (
-                          shelf.map((item) => (
-                            <PantryChip
-                              key={item.id}
-                              item={item}
-                              isDeleting={deletingPantryItemId === item.id}
-                              disableDelete={deletingPantryItemId !== null}
-                              onDelete={(pantryItemId) => {
-                                void handleDeletePantryItem(pantryItemId);
-                              }}
-                            />
-                          ))
-                        ) : (
-                          <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
-                            {pantryItems.length === 0 && shelfIndex === 0
-                              ? "まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。"
-                              : "空き棚"}
-                          </li>
-                        )}
-                      </ul>
-                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
+              <div className="relative space-y-3 px-4 pt-18 pb-4 sm:px-5 sm:pt-18 sm:pb-5">
+                {visibleShelfItems.map((shelf, shelfIndex) => (
+                  <div key={`shelf-${shelfIndex}`} className="space-y-2">
+                    <ul className="grid min-h-24 content-start gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {shelf.length > 0 ? (
+                        shelf.map((item) => (
+                          <PantryChip
+                            key={item.id}
+                            item={item}
+                            isDeleting={deletingPantryItemId === item.id}
+                            disableDelete={deletingPantryItemId !== null}
+                            onDelete={(pantryItemId) => {
+                              void handleDeletePantryItem(pantryItemId);
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <li className="rounded-md border border-dashed border-slate-400/35 bg-white/40 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
+                          {pantryItems.length === 0 && shelfIndex === 0
+                            ? "まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。"
+                            : "空き棚"}
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
