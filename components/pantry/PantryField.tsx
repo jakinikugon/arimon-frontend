@@ -70,8 +70,6 @@ const INITIAL_PANTRY_ADD_FORM: PantryAddForm = {
 };
 
 const PANTRY_ITEMS_PER_SHELF = 3;
-const FREEZER_ITEMS_PER_SHELF = 2;
-const DOOR_POCKET_SLOT_COUNT = 3;
 
 const PANTRY_CATEGORY_BADGE_STYLES = [
   "border-emerald-500/35 bg-emerald-500/15 text-emerald-700",
@@ -89,33 +87,6 @@ function chunkPantryItems(items: PantryItem[]): PantryItem[][] {
   }
 
   return shelves;
-}
-
-type FridgeLayout = {
-  freezerItems: PantryItem[];
-  shelfItems: PantryItem[][];
-  doorPocketItems: PantryItem[];
-};
-
-function buildFridgeLayout(items: PantryItem[]): FridgeLayout {
-  const doorPocketCount =
-    items.length >= 5
-      ? Math.min(DOOR_POCKET_SLOT_COUNT, Math.ceil(items.length / 4))
-      : 0;
-  const doorPocketItems =
-    doorPocketCount > 0 ? items.slice(-doorPocketCount) : [];
-  const mainCompartmentItems =
-    doorPocketCount > 0 ? items.slice(0, -doorPocketCount) : items;
-  const freezerItems = mainCompartmentItems.slice(0, FREEZER_ITEMS_PER_SHELF);
-  const shelfItems = chunkPantryItems(
-    mainCompartmentItems.slice(FREEZER_ITEMS_PER_SHELF),
-  );
-
-  return {
-    freezerItems,
-    shelfItems,
-    doorPocketItems,
-  };
 }
 
 function getCategoryBadgeStyle(category: string): string {
@@ -164,16 +135,18 @@ function InlineError({
 function PantryListSkeleton() {
   return (
     <div className="rounded-[1.75rem] border border-cyan-400/40 bg-gradient-to-b from-cyan-50/95 via-white/95 to-sky-100/90 p-4">
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
-        <div className="space-y-3">
-          <Skeleton className="h-16 w-full rounded-xl" />
-          <Skeleton className="h-24 w-full rounded-xl" />
-          <Skeleton className="h-24 w-full rounded-xl" />
-        </div>
+      <div className="space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
         <div className="space-y-2">
           <Skeleton className="h-16 w-full rounded-xl" />
-          <Skeleton className="h-16 w-full rounded-xl" />
-          <Skeleton className="h-16 w-full rounded-xl" />
+          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-24 w-full rounded-xl" />
+          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-24 w-full rounded-xl" />
+          <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
         </div>
       </div>
     </div>
@@ -447,26 +420,19 @@ export function PantryField() {
     addForm.name.trim().length > 0 &&
     addForm.category.trim().length > 0;
 
-  const fridgeLayout = useMemo(() => {
-    return buildFridgeLayout(pantryItems);
+  const pantryShelves = useMemo(() => {
+    return chunkPantryItems(pantryItems);
   }, [pantryItems]);
 
   const visibleShelfItems = useMemo(() => {
-    const shelves =
-      fridgeLayout.shelfItems.length > 0 ? [...fridgeLayout.shelfItems] : [[]];
+    const shelves = pantryShelves.length > 0 ? [...pantryShelves] : [[]];
 
     while (shelves.length < 2) {
       shelves.push([]);
     }
 
     return shelves;
-  }, [fridgeLayout.shelfItems]);
-
-  const doorPocketSlots = useMemo(() => {
-    return Array.from({ length: DOOR_POCKET_SLOT_COUNT }, (_, index) => {
-      return fridgeLayout.doorPocketItems[index] ?? null;
-    });
-  }, [fridgeLayout.doorPocketItems]);
+  }, [pantryShelves]);
 
   return (
     <Card className="gap-4">
@@ -719,20 +685,15 @@ export function PantryField() {
               <div className="pointer-events-none absolute inset-y-2 left-2 w-4 rounded-full bg-gradient-to-r from-cyan-400/40 to-transparent" />
               <div className="pointer-events-none absolute inset-y-2 right-2 w-4 rounded-full bg-gradient-to-l from-cyan-400/40 to-transparent" />
 
-              <div className="relative grid gap-3 lg:grid-cols-[minmax(0,1fr)_120px]">
-                <div className="space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
-                  <div className="rounded-xl border border-sky-500/35 bg-sky-200/60">
-                    <p className="px-3 py-1 text-[11px] font-semibold tracking-wide text-sky-700">
-                      冷凍室
-                    </p>
-                    <div className="h-px bg-sky-500/25" />
-                    <ul className="grid min-h-16 grid-cols-2 gap-2 p-2">
-                      {fridgeLayout.freezerItems.length > 0 ? (
-                        fridgeLayout.freezerItems.map((item) => (
+              <div className="relative space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
+                {visibleShelfItems.map((shelf, shelfIndex) => (
+                  <div key={`shelf-${shelfIndex}`} className="space-y-2">
+                    <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {shelf.length > 0 ? (
+                        shelf.map((item) => (
                           <PantryChip
                             key={item.id}
                             item={item}
-                            compact
                             isDeleting={deletingPantryItemId === item.id}
                             disableDelete={deletingPantryItemId !== null}
                             onDelete={(pantryItemId) => {
@@ -741,71 +702,14 @@ export function PantryField() {
                           />
                         ))
                       ) : (
-                        <li className="col-span-2 rounded-md border border-dashed border-sky-500/30 bg-white/70 px-2 py-3 text-center text-[11px] text-slate-500">
+                        <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
                           食材がありません
                         </li>
                       )}
                     </ul>
+                    <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
                   </div>
-
-                  {visibleShelfItems.map((shelf, shelfIndex) => (
-                    <div key={`shelf-${shelfIndex}`} className="space-y-2">
-                      <ul className="grid gap-2 sm:grid-cols-2">
-                        {shelf.length > 0 ? (
-                          shelf.map((item) => (
-                            <PantryChip
-                              key={item.id}
-                              item={item}
-                              isDeleting={deletingPantryItemId === item.id}
-                              disableDelete={deletingPantryItemId !== null}
-                              onDelete={(pantryItemId) => {
-                                void handleDeletePantryItem(pantryItemId);
-                              }}
-                            />
-                          ))
-                        ) : (
-                          <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2">
-                            食材がありません
-                          </li>
-                        )}
-                      </ul>
-                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
-                    </div>
-                  ))}
-                </div>
-
-                <aside className="space-y-2 rounded-2xl border border-cyan-500/35 bg-cyan-50/70 p-2">
-                  <p className="px-1 text-[11px] font-semibold tracking-wide text-cyan-700">
-                    ドアポケット
-                  </p>
-                  <ul className="space-y-2">
-                    {doorPocketSlots.map((item, index) => {
-                      if (!item) {
-                        return (
-                          <li
-                            key={`door-pocket-empty-${index}`}
-                            className="flex min-h-16 items-center justify-center rounded-lg border border-dashed border-cyan-500/30 bg-white/80 px-2 py-3 text-[11px] text-slate-500"
-                          >
-                            空き
-                          </li>
-                        );
-                      }
-
-                      return (
-                        <PantryChip
-                          key={item.id}
-                          item={item}
-                          compact
-                          isDeleting={deletingPantryItemId === item.id}
-                          disableDelete={deletingPantryItemId !== null}
-                          onDelete={(pantryItemId) => {
-                            void handleDeletePantryItem(pantryItemId);
-                          }}
-                        />
-                      );
-                    })}
-                  </ul>
-                </aside>
+                ))}
               </div>
             </div>
           )}
