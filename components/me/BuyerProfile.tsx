@@ -50,56 +50,8 @@ export function BuyerProfile() {
         setReports(buyerReports);
       } catch {
         // setErrorMessage("プロフィール情報の取得に失敗しました。");
-        setProfile({
-          id: "dummy" as Buyer["id"],
-          setting: {
-            buyerName: "ダミーユーザー",
-            allergens: ["egg"] as Buyer["setting"]["allergens"],
-            prompt: "lorem ipsum dolor sit amet" as Buyer["setting"]["prompt"],
-          },
-        });
-        setReports({
-          totalCount: 10,
-          totalDiscount: 0,
-          items: [
-            {
-              date: new Date().toISOString() as Reports["items"][number]["date"],
-              item: {
-                id: "dummy-item" as Reports["items"][number]["item"]["id"],
-                name: "ダミー商品",
-                imageUrl: "" as Reports["items"][number]["item"]["imageUrl"],
-                price: {
-                  regular: 1000,
-                  discount: 800,
-                },
-              },
-            },
-            {
-              date: new Date().toISOString() as Reports["items"][number]["date"],
-              item: {
-                id: "dummy-item" as Reports["items"][number]["item"]["id"],
-                name: "ダミー商品",
-                imageUrl: "" as Reports["items"][number]["item"]["imageUrl"],
-                price: {
-                  regular: 1000,
-                  discount: 800,
-                },
-              },
-            },
-            {
-              date: "2020-01-01T00:00:00Z" as Reports["items"][number]["date"],
-              item: {
-                id: "dummy-item-2" as Reports["items"][number]["item"]["id"],
-                name: "古いダミー商品",
-                imageUrl: "" as Reports["items"][number]["item"]["imageUrl"],
-                price: {
-                  regular: 1500,
-                  discount: 1200,
-                },
-              },
-            },
-          ],
-        });
+        setProfile(null);
+        setReports(null);
       } finally {
         setLoading(false);
       }
@@ -142,7 +94,7 @@ export function BuyerProfile() {
           <SquareMove2 color="var(--color-gray-300)" size="2rem" />
           <p className="text-sm text-gray-500">読み込み中...</p>
         </div>
-      ) : (
+      ) : profile && reports ? (
         <div className="mx-2 max-w-4xl space-y-6 pt-3">
           <ProfileContainer profile={profile} />
           <RescueCounter
@@ -170,6 +122,12 @@ export function BuyerProfile() {
               className="w-36"
             />
           </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-3 py-10">
+          <p className="text-sm text-gray-500">
+            プロフィール情報の取得に失敗しました
+          </p>
         </div>
       )}
       <BottomNavigation currentPage="profile" />
