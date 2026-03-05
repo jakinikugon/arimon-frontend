@@ -10,6 +10,7 @@ import type { Buyer, Reports } from "@/types/domain";
 import { logout } from "@/lib/auth/logout";
 
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
+import { SquareMove2 } from "@/components/loader";
 import { LogoutButton } from "@/components/me/container/LogoutButton";
 
 import {
@@ -136,34 +137,41 @@ export function BuyerProfile() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="mx-2 max-w-4xl space-y-6 pt-3">
-        <ProfileContainer profile={profile} />
-        <RescueCounter
-          count={reports?.totalCount ?? 0}
-          totalDiscount={reports?.totalDiscount ?? 0}
-        />
-        <SettingContainer
-          loading={loading}
-          profile={profile}
-          setSettingsUpdateTrigger={setSettingsUpdateTrigger}
-        />
-        <PurchaseHistoryContainer
-          recentItems={recentItems}
-          olderItems={olderItems}
-          historyOpen={historyOpen}
-          onHistoryOpenChange={setHistoryOpen}
-        />
-        {errorMessage && (
-          <p className="text-destructive text-sm">{errorMessage}</p>
-        )}
-        <div className="flex flex-col items-center justify-center py-8">
-          <LogoutButton
-            pending={logoutPending}
-            onLogout={handleLogout}
-            className="w-36"
-          />
+      {loading ? (
+        <div className="flex flex-col items-center gap-3 py-10">
+          <SquareMove2 color="var(--color-gray-300)" size="2rem" />
+          <p className="text-sm text-gray-500">読み込み中...</p>
         </div>
-      </div>
+      ) : (
+        <div className="mx-2 max-w-4xl space-y-6 pt-3">
+          <ProfileContainer profile={profile} />
+          <RescueCounter
+            count={reports?.totalCount ?? 0}
+            totalDiscount={reports?.totalDiscount ?? 0}
+          />
+          <SettingContainer
+            loading={loading}
+            profile={profile}
+            setSettingsUpdateTrigger={setSettingsUpdateTrigger}
+          />
+          <PurchaseHistoryContainer
+            recentItems={recentItems}
+            olderItems={olderItems}
+            historyOpen={historyOpen}
+            onHistoryOpenChange={setHistoryOpen}
+          />
+          {errorMessage && (
+            <p className="text-destructive text-sm">{errorMessage}</p>
+          )}
+          <div className="flex flex-col items-center justify-center py-8">
+            <LogoutButton
+              pending={logoutPending}
+              onLogout={handleLogout}
+              className="w-36"
+            />
+          </div>
+        </div>
+      )}
       <BottomNavigation currentPage="profile" />
     </div>
   );
