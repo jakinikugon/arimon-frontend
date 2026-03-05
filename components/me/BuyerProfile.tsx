@@ -87,7 +87,7 @@ export function BuyerProfile() {
   };
 
   return (
-    <main>
+    <div>
       {loading ? (
         <div className="flex flex-col items-center gap-3 py-10">
           <SquareMove2 color="var(--color-gray-300)" size="2rem" />
@@ -129,6 +129,6 @@ export function BuyerProfile() {
           </p>
         </div>
       )}
-    </main>
+    </div>
   );
 }

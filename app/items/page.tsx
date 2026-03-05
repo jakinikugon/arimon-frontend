@@ -4,9 +4,9 @@ import { BottomNavigation } from "@/components/layout/BottomNavigation";
 export default function ItemsPage() {
   return (
     <>
-      <div className="mx-2 max-w-4xl">
+      <main className="mx-2 max-w-4xl">
         <ItemsPanel />
-      </div>
+      </main>
       <BottomNavigation currentPage="items" />
     </>
   );

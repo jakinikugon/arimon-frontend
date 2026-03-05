@@ -4,7 +4,9 @@ import { BuyerProfile } from "@/components/me/BuyerProfile";
 export default function MePage() {
   return (
     <>
-      <BuyerProfile />
+      <main>
+        <BuyerProfile />
+      </main>
       <BottomNavigation currentPage="profile" />
     </>
   );
