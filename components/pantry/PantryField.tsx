@@ -8,10 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
-import { Loader2, Trash2, XCircle } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 import Image from "next/image";
 
 import type { ItemCategory, PantryItem, PantryItemId } from "@/types/domain";
@@ -193,6 +193,7 @@ function PantryListSkeleton() {
 type PantryChipProps = {
   item: PantryItem;
   compact?: boolean;
+  isDeleteSelectionMode: boolean;
   isDeleting: boolean;
   disableDelete: boolean;
   onDelete: (pantryItemId: PantryItemId) => void;
@@ -201,53 +202,63 @@ type PantryChipProps = {
 function PantryChip({
   item,
   compact = false,
+  isDeleteSelectionMode,
   isDeleting,
   disableDelete,
   onDelete,
 }: PantryChipProps) {
+  const chipContent = (
+    <div className="flex min-h-full min-w-0 flex-1 flex-col justify-between gap-1 text-left">
+      <p
+        className={cn(
+          "w-full truncate font-semibold text-slate-700",
+          compact ? "text-xs" : "text-sm",
+        )}
+      >
+        {item.name}
+      </p>
+      <span
+        className={cn(
+          "inline-flex w-fit max-w-full items-center truncate rounded-full border px-1.5 py-0.5 font-medium",
+          compact ? "text-[10px]" : "text-[11px]",
+          getCategoryBadgeStyle(item.category),
+        )}
+      >
+        {item.category}
+      </span>
+    </div>
+  );
+
   return (
     <li
       className={cn(
-        "group flex min-h-16 items-start justify-between gap-2 rounded-lg border border-white/80 bg-white/90 p-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+        "group relative min-h-16 rounded-lg border border-white/80 bg-white/90 p-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+        isDeleteSelectionMode
+          ? "ring-red-300/80 hover:border-red-300 hover:bg-red-50/20"
+          : "",
         compact ? "min-h-14 p-2" : "p-2.5",
       )}
     >
-      <div className="min-w-0 space-y-1">
-        <p
-          className={cn(
-            "truncate font-semibold text-slate-700",
-            compact ? "text-xs" : "text-sm",
-          )}
+      {isDeleteSelectionMode ? (
+        <button
+          type="button"
+          className="h-full w-full cursor-pointer"
+          onClick={() => {
+            onDelete(item.id);
+          }}
+          disabled={isDeleting || disableDelete}
+          aria-label={`${item.name}を削除`}
         >
-          {item.name}
-        </p>
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full border px-1.5 py-0.5 font-medium",
-            compact ? "text-[10px]" : "text-[11px]",
-            getCategoryBadgeStyle(item.category),
-          )}
-        >
-          {item.category}
-        </span>
-      </div>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className="text-red-600 hover:bg-red-100/90 hover:text-red-700"
-        onClick={() => {
-          onDelete(item.id);
-        }}
-        aria-label={`${item.name}を削除`}
-        disabled={isDeleting || disableDelete}
-      >
-        {isDeleting ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <Trash2 className="size-4" />
-        )}
-      </Button>
+          {chipContent}
+        </button>
+      ) : (
+        chipContent
+      )}
+      {isDeleting ? (
+        <div className="absolute top-1.5 right-1.5 rounded-full bg-white/90 p-1">
+          <Loader2 className="size-3.5 animate-spin text-red-600" />
+        </div>
+      ) : null}
     </li>
   );
 }
@@ -267,6 +278,7 @@ export function PantryField() {
   const [isPantryAddSubmitting, setIsPantryAddSubmitting] = useState(false);
   const [isJanScannerOpen, setIsJanScannerOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteSelectionMode, setIsDeleteSelectionMode] = useState(false);
 
   const [pantryError, setPantryError] = useState<string | null>(null);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
@@ -480,19 +492,49 @@ export function PantryField() {
                 {pantryItems.length}件
               </span>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                void loadPantry();
-              }}
-              disabled={isPantryLoading}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
-            >
-              <IoReload />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  void loadPantry();
+                }}
+                disabled={isPantryLoading}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
+              >
+                <IoReload />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
+                onClick={() => {
+                  setIsDeleteSelectionMode((current) => !current);
+                }}
+                disabled={isPantryLoading || deletingPantryItemId !== null}
+                aria-pressed={isDeleteSelectionMode}
+                aria-label={
+                  isDeleteSelectionMode
+                    ? "削除選択を終了"
+                    : "削除する食材を選択"
+                }
+                title={
+                  isDeleteSelectionMode
+                    ? "削除選択を終了"
+                    : "削除する食材を選択"
+                }
+              >
+                <FiTrash2 />
+              </Button>
+            </div>
           </div>
+          {isDeleteSelectionMode ? (
+            <p className="text-xs text-red-700">
+              削除したい食材をタップしてください。
+            </p>
+          ) : null}
 
           {pantryError ? (
             <InlineError
@@ -562,6 +604,7 @@ export function PantryField() {
                           <PantryChip
                             key={slot.id}
                             item={slot}
+                            isDeleteSelectionMode={isDeleteSelectionMode}
                             isDeleting={deletingPantryItemId === slot.id}
                             disableDelete={deletingPantryItemId !== null}
                             onDelete={(pantryItemId) => {
