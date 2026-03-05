@@ -100,7 +100,10 @@ export function LoginForm() {
 
       <p className="mt-4 text-center text-sm text-gray-600">
         アカウントをお持ちでないですか？{" "}
-        <Link href="/register" className="text-brand-main-400 hover:underline">
+        <Link
+          href="/auth/register"
+          className="text-brand-main-400 hover:underline"
+        >
           新規作成
         </Link>
       </p>
