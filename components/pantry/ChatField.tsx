@@ -1,8 +1,15 @@
 "use client";
 
-import { type FormEvent, useCallback, useEffect, useState } from "react";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import Link from "next/link";
 
 import type { ChatMessage, Recipe } from "@/types/domain";
 
@@ -102,18 +109,107 @@ function RecipeListSkeleton() {
   );
 }
 
+type ChatTab = "chat" | "recipes";
+
+type RecipeAccordionProps = {
+  recipes: Recipe[];
+  valuePrefix: string;
+};
+
+function buildItemsHref(query: string) {
+  const normalized = query.trim();
+  if (!normalized) {
+    return "/items";
+  }
+  return `/items?q=${encodeURIComponent(normalized)}`;
+}
+
+function RecipeAccordion({ recipes, valuePrefix }: RecipeAccordionProps) {
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      {recipes.map((recipe, recipeIndex) => (
+        <AccordionItem
+          key={`${valuePrefix}-${recipe.title}-${recipeIndex}`}
+          value={`${valuePrefix}-recipe-${recipeIndex}`}
+        >
+          <AccordionTrigger className="py-3">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold">{recipe.title}</p>
+              <p className="text-muted-foreground text-xs">
+                {recipe.description}
+              </p>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <ul className="space-y-2">
+              {recipe.materials.map((material, materialIndex) => {
+                const searchQuery = material.query.trim() || material.name;
+                return (
+                  <li
+                    key={`${valuePrefix}-${recipe.title}-${searchQuery}-${materialIndex}`}
+                    className={cn(
+                      "flex items-center justify-between gap-3 rounded-md border px-3 py-2",
+                      material.inPantry
+                        ? "border-brand-accent-300 bg-brand-accent-50"
+                        : "bg-muted/40",
+                    )}
+                  >
+                    <div className="flex items-start gap-2">
+                      {material.inPantry ? (
+                        <CheckCircle2 className="mt-0.5 size-4 text-green-700" />
+                      ) : (
+                        <XCircle className="mt-0.5 size-4 text-gray-500" />
+                      )}
+                      <div>
+                        <Link
+                          href={buildItemsHref(searchQuery)}
+                          className="text-sm font-medium underline-offset-2 hover:underline"
+                        >
+                          {material.name}
+                        </Link>
+                        <p className="text-muted-foreground text-xs">
+                          検索語: {searchQuery}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={cn(
+                        "text-xs font-medium whitespace-nowrap",
+                        material.inPantry
+                          ? "text-brand-accent-800"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {material.inPantry ? "冷蔵庫にあり" : "買い足し候補"}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
 export function ChatField() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipeHistory, setRecipeHistory] = useState<Recipe[]>([]);
+  const [activeTab, setActiveTab] = useState<ChatTab>("chat");
   const [chatInput, setChatInput] = useState("");
 
   const [isChatLoading, setIsChatLoading] = useState(true);
-  const [isRecipesLoading, setIsRecipesLoading] = useState(true);
+  const [isRecipeHistoryLoading, setIsRecipeHistoryLoading] = useState(false);
   const [isChatSubmitting, setIsChatSubmitting] = useState(false);
 
   const [chatError, setChatError] = useState<string | null>(null);
-  const [recipesError, setRecipesError] = useState<string | null>(null);
+  const [recipeHistoryError, setRecipeHistoryError] = useState<string | null>(
+    null,
+  );
   const [chatSubmitError, setChatSubmitError] = useState<string | null>(null);
+
+  const recipeHistoryRequestIdRef = useRef(0);
 
   const loadChatMessages = useCallback(async () => {
     setIsChatLoading(true);
@@ -128,22 +224,41 @@ export function ChatField() {
     }
   }, []);
 
-  const loadRecipes = useCallback(async () => {
-    setIsRecipesLoading(true);
-    setRecipesError(null);
+  const loadRecipeHistory = useCallback(async () => {
+    const requestId = recipeHistoryRequestIdRef.current + 1;
+    recipeHistoryRequestIdRef.current = requestId;
+
+    setIsRecipeHistoryLoading(true);
+    setRecipeHistoryError(null);
+
     try {
       const response = await getBuyersMeChatRecipes();
-      setRecipes(response);
+      if (recipeHistoryRequestIdRef.current !== requestId) {
+        return;
+      }
+      setRecipeHistory(response);
     } catch {
-      setRecipesError("献立履歴の取得に失敗しました。");
+      if (recipeHistoryRequestIdRef.current !== requestId) {
+        return;
+      }
+      setRecipeHistoryError("献立履歴の取得に失敗しました。");
     } finally {
-      setIsRecipesLoading(false);
+      if (recipeHistoryRequestIdRef.current === requestId) {
+        setIsRecipeHistoryLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    void Promise.allSettled([loadChatMessages(), loadRecipes()]);
-  }, [loadChatMessages, loadRecipes]);
+    void loadChatMessages();
+  }, [loadChatMessages]);
+
+  useEffect(() => {
+    if (activeTab !== "recipes") {
+      return;
+    }
+    void loadRecipeHistory();
+  }, [activeTab, loadRecipeHistory]);
 
   const handleSubmitChat = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -161,16 +276,6 @@ export function ChatField() {
         const response = await postBuyersMeChatMessages(content);
         setChatMessages(response.messages);
         setChatInput("");
-
-        try {
-          const latestRecipes = await getBuyersMeChatRecipes();
-          setRecipes(latestRecipes);
-          setRecipesError(null);
-        } catch {
-          setRecipesError(
-            "献立履歴の同期に失敗しました。履歴タブから再読み込みできます。",
-          );
-        }
       } catch {
         setChatSubmitError("メッセージ送信に失敗しました。");
       } finally {
@@ -183,6 +288,12 @@ export function ChatField() {
   const canSubmitChat =
     !isChatSubmitting && !isChatLoading && chatInput.trim().length > 0;
 
+  const handleTabChange = useCallback((value: string) => {
+    if (value === "chat" || value === "recipes") {
+      setActiveTab(value);
+    }
+  }, []);
+
   return (
     <Card className="gap-4">
       <CardHeader className="gap-1">
@@ -192,7 +303,7 @@ export function ChatField() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="chat">
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="chat">チャットBOT</TabsTrigger>
             <TabsTrigger value="recipes">提案した献立履歴</TabsTrigger>
@@ -218,26 +329,40 @@ export function ChatField() {
                 </p>
               ) : (
                 <div className="space-y-2 pr-2">
-                  {chatMessages.map((message, index) => (
-                    <article
-                      key={`${message.role}-${index}`}
-                      className={cn(
-                        "max-w-[90%] rounded-xl px-3 py-2 text-sm leading-relaxed shadow-xs",
-                        message.role === "user"
-                          ? "bg-brand-main-100 text-brand-main-900 ml-auto"
-                          : "bg-muted mr-auto border",
-                      )}
-                    >
-                      <p>{message.content}</p>
-                      {message.role === "assistant" &&
-                      message.recipes.length > 0 ? (
-                        <p className="mt-2 text-xs opacity-80">
-                          この返信には {message.recipes.length}{" "}
-                          件の献立候補が含まれます
-                        </p>
-                      ) : null}
-                    </article>
-                  ))}
+                  {chatMessages.map((message, index) => {
+                    if (message.role === "user") {
+                      return (
+                        <article
+                          key={`${message.role}-${index}`}
+                          className="bg-brand-main-100 text-brand-main-900 ml-auto max-w-[90%] rounded-xl px-3 py-2 text-sm leading-relaxed shadow-xs"
+                        >
+                          <p>{message.content}</p>
+                        </article>
+                      );
+                    }
+
+                    return (
+                      <section
+                        key={`${message.role}-${index}`}
+                        className="mr-auto max-w-[90%] space-y-2"
+                      >
+                        <article className="bg-muted rounded-xl border px-3 py-2 text-sm leading-relaxed shadow-xs">
+                          <p>{message.content}</p>
+                        </article>
+                        {message.recipes.length > 0 ? (
+                          <div className="rounded-xl border bg-white px-3 py-2">
+                            <p className="text-muted-foreground mb-2 text-xs">
+                              提案献立
+                            </p>
+                            <RecipeAccordion
+                              recipes={message.recipes}
+                              valuePrefix={`chat-message-${index}`}
+                            />
+                          </div>
+                        ) : null}
+                      </section>
+                    );
+                  })}
                 </div>
               )}
             </ScrollArea>
@@ -272,91 +397,35 @@ export function ChatField() {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  void loadRecipes();
+                  void loadRecipeHistory();
                 }}
-                disabled={isRecipesLoading}
+                disabled={isRecipeHistoryLoading}
               >
                 履歴を更新
               </Button>
             </div>
 
-            {recipesError ? (
+            {recipeHistoryError ? (
               <InlineError
-                message={recipesError}
+                message={recipeHistoryError}
                 onRetry={() => {
-                  void loadRecipes();
+                  void loadRecipeHistory();
                 }}
-                disabled={isRecipesLoading}
+                disabled={isRecipeHistoryLoading}
               />
             ) : null}
 
-            {isRecipesLoading ? (
+            {isRecipeHistoryLoading ? (
               <RecipeListSkeleton />
-            ) : recipes.length === 0 ? (
+            ) : recipeHistory.length === 0 ? (
               <p className="text-muted-foreground rounded-md border border-dashed p-3 text-sm">
                 まだ献立提案の履歴がありません。
               </p>
             ) : (
-              <Accordion type="single" collapsible className="w-full">
-                {recipes.map((recipe, index) => (
-                  <AccordionItem
-                    key={`${recipe.title}-${index}`}
-                    value={`recipe-${index}`}
-                  >
-                    <AccordionTrigger className="py-3">
-                      <div className="space-y-1">
-                        <p className="text-sm font-semibold">{recipe.title}</p>
-                        <p className="text-muted-foreground text-xs">
-                          {recipe.description}
-                        </p>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-3">
-                      <ul className="space-y-2">
-                        {recipe.materials.map((material, materialIndex) => (
-                          <li
-                            key={`${recipe.title}-${material.query}-${materialIndex}`}
-                            className={cn(
-                              "flex items-center justify-between gap-3 rounded-md border px-3 py-2",
-                              material.inPantry
-                                ? "border-brand-accent-300 bg-brand-accent-50"
-                                : "bg-muted/40",
-                            )}
-                          >
-                            <div className="flex items-start gap-2">
-                              {material.inPantry ? (
-                                <CheckCircle2 className="mt-0.5 size-4 text-green-700" />
-                              ) : (
-                                <XCircle className="mt-0.5 size-4 text-gray-500" />
-                              )}
-                              <div>
-                                <p className="text-sm font-medium">
-                                  {material.name}
-                                </p>
-                                <p className="text-muted-foreground text-xs">
-                                  検索語: {material.query}
-                                </p>
-                              </div>
-                            </div>
-                            <span
-                              className={cn(
-                                "text-xs font-medium whitespace-nowrap",
-                                material.inPantry
-                                  ? "text-brand-accent-800"
-                                  : "text-muted-foreground",
-                              )}
-                            >
-                              {material.inPantry
-                                ? "冷蔵庫にあり"
-                                : "買い足し候補"}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+              <RecipeAccordion
+                recipes={recipeHistory}
+                valuePrefix="recipe-history"
+              />
             )}
           </TabsContent>
         </Tabs>
