@@ -27,6 +27,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,6 +80,7 @@ const INITIAL_PANTRY_ADD_FORM: PantryAddForm = {
 
 const PANTRY_ITEMS_PER_SHELF = 3;
 const VISIBLE_FRIDGE_SHELF_COUNT = 4;
+const ADD_BUTTON_SLOT = "add";
 
 const PANTRY_CATEGORY_BADGE_STYLES = [
   "border-emerald-500/35 bg-emerald-500/15 text-emerald-700",
@@ -82,11 +90,40 @@ const PANTRY_CATEGORY_BADGE_STYLES = [
   "border-violet-500/35 bg-violet-500/15 text-violet-700",
 ] as const;
 
-function chunkPantryItems(items: PantryItem[]): PantryItem[][] {
-  const shelves: PantryItem[][] = [];
+type PantryShelfSlot = PantryItem | null | typeof ADD_BUTTON_SLOT;
 
-  for (let index = 0; index < items.length; index += PANTRY_ITEMS_PER_SHELF) {
-    shelves.push(items.slice(index, index + PANTRY_ITEMS_PER_SHELF));
+function buildPantryShelfSlots(items: PantryItem[]): PantryShelfSlot[][] {
+  const totalSlots = items.length + 1;
+  const requiredShelfCount = Math.max(
+    VISIBLE_FRIDGE_SHELF_COUNT,
+    Math.ceil(totalSlots / PANTRY_ITEMS_PER_SHELF),
+  );
+
+  const shelves: PantryShelfSlot[][] = [];
+  for (let shelfIndex = 0; shelfIndex < requiredShelfCount; shelfIndex += 1) {
+    const shelfSlots: PantryShelfSlot[] = [];
+
+    for (
+      let columnIndex = 0;
+      columnIndex < PANTRY_ITEMS_PER_SHELF;
+      columnIndex += 1
+    ) {
+      const flatIndex = shelfIndex * PANTRY_ITEMS_PER_SHELF + columnIndex;
+
+      if (flatIndex < items.length) {
+        shelfSlots.push(items[flatIndex]);
+        continue;
+      }
+
+      if (flatIndex === items.length) {
+        shelfSlots.push(ADD_BUTTON_SLOT);
+        continue;
+      }
+
+      shelfSlots.push(null);
+    }
+
+    shelves.push(shelfSlots);
   }
 
   return shelves;
@@ -229,7 +266,7 @@ export function PantryField() {
   const [isJanLookupLoading, setIsJanLookupLoading] = useState(false);
   const [isPantryAddSubmitting, setIsPantryAddSubmitting] = useState(false);
   const [isJanScannerOpen, setIsJanScannerOpen] = useState(false);
-  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const [pantryError, setPantryError] = useState<string | null>(null);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
@@ -388,6 +425,8 @@ export function PantryField() {
         setSuggestions([]);
         setSuggestionsError(null);
         setJanLookupError(null);
+        setPantryAddError(null);
+        setIsAddDialogOpen(false);
       } catch {
         setPantryAddError(
           "食材の追加に失敗しました。時間をおいて再試行してください。",
@@ -420,225 +459,19 @@ export function PantryField() {
     addForm.name.trim().length > 0 &&
     addForm.category.trim().length > 0;
 
-  const pantryShelves = useMemo(() => {
-    return chunkPantryItems(pantryItems);
+  const shelfSlots = useMemo(() => {
+    return buildPantryShelfSlots(pantryItems);
   }, [pantryItems]);
-
-  const visibleShelfItems = useMemo(() => {
-    const shelves = pantryShelves.length > 0 ? [...pantryShelves] : [[]];
-
-    while (shelves.length < VISIBLE_FRIDGE_SHELF_COUNT) {
-      shelves.push([]);
-    }
-
-    return shelves;
-  }, [pantryShelves]);
 
   return (
     <Card className="gap-4">
       <CardHeader className="gap-1">
         <CardTitle>冷蔵庫</CardTitle>
         <CardDescription>
-          「冷蔵庫に食材を追加する」からフォームを開き、食材を登録できます。
+          棚の「+」からフォームを開き、食材を登録できます。
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <section className="space-y-3">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => {
-              setIsAddFormOpen((current) => !current);
-            }}
-            aria-expanded={isAddFormOpen}
-            aria-controls="pantry-add-form"
-            className="group border-brand-main-200/70 from-brand-main-50 to-brand-accent-50 hover:from-brand-main-100 hover:to-brand-accent-100 h-auto w-full justify-start rounded-2xl border bg-gradient-to-r via-white px-4 py-3 text-left shadow-sm"
-          >
-            <span className="flex w-full items-center justify-between gap-3">
-              <span className="flex items-center gap-3">
-                <span className="bg-brand-main text-primary-foreground flex size-9 items-center justify-center rounded-full shadow-sm">
-                  <FiPlus
-                    className={cn(
-                      "size-4 transition-transform duration-200",
-                      isAddFormOpen ? "rotate-45" : "",
-                    )}
-                  />
-                </span>
-                <span className="space-y-0.5">
-                  <span className="block text-sm font-semibold">
-                    {isAddFormOpen
-                      ? "食材追加フォームを閉じる"
-                      : "冷蔵庫に食材を追加する"}
-                  </span>
-                  <span className="text-muted-foreground block text-xs">
-                    食材名・JANコード・カテゴリを入力して追加します。
-                  </span>
-                </span>
-              </span>
-              <span className="text-muted-foreground text-xs">
-                {isAddFormOpen ? "閉じる" : "開く"}
-              </span>
-            </span>
-          </Button>
-
-          {isAddFormOpen ? (
-            <div
-              id="pantry-add-form"
-              className="animate-in fade-in slide-in-from-top-2 bg-card/80 rounded-2xl border p-4 shadow-sm backdrop-blur-sm"
-            >
-              <form className="space-y-4" onSubmit={handleSubmitPantryItem}>
-                <div className="space-y-2">
-                  <Label htmlFor="pantry-name">食材名（必須）</Label>
-                  <Input
-                    id="pantry-name"
-                    value={addForm.name}
-                    onChange={(event) => {
-                      setAddForm((current) => ({
-                        ...current,
-                        name: event.target.value,
-                      }));
-                    }}
-                    placeholder="例: たまねぎ"
-                    autoComplete="off"
-                    disabled={isPantryAddSubmitting}
-                  />
-                  {addForm.name.trim().length > 0 ? (
-                    <div className="space-y-1">
-                      {isSuggestionsLoading ? (
-                        <p className="text-muted-foreground text-xs">
-                          候補を取得しています...
-                        </p>
-                      ) : null}
-                      {suggestionsError ? (
-                        <InlineError
-                          message={suggestionsError}
-                          className="text-xs"
-                        />
-                      ) : null}
-                      {!isSuggestionsLoading &&
-                      !suggestionsError &&
-                      suggestions.length > 0 ? (
-                        <ul className="max-h-36 space-y-1 overflow-y-auto rounded-md border p-2">
-                          {suggestions.map((suggestion) => (
-                            <li key={suggestion}>
-                              <button
-                                type="button"
-                                className="hover:bg-accent w-full rounded-md px-2 py-1 text-left text-sm transition-colors"
-                                onClick={() => {
-                                  setAddForm((current) => ({
-                                    ...current,
-                                    name: suggestion,
-                                  }));
-                                  setSuggestions([]);
-                                }}
-                                disabled={isPantryAddSubmitting}
-                              >
-                                {suggestion}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
-                  <div className="space-y-2">
-                    <Label htmlFor="pantry-jan-code">JANコード（任意）</Label>
-                    <Input
-                      id="pantry-jan-code"
-                      value={addForm.janCode}
-                      onChange={(event) => {
-                        setAddForm((current) => ({
-                          ...current,
-                          janCode: event.target.value,
-                        }));
-                      }}
-                      placeholder="例: 4901234567890"
-                      inputMode="numeric"
-                      disabled={isPantryAddSubmitting || isJanLookupLoading}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsJanScannerOpen(true);
-                    }}
-                    disabled={isPantryAddSubmitting || isJanLookupLoading}
-                  >
-                    JANコードを読み取る
-                  </Button>
-                </div>
-
-                {janLookupError ? (
-                  <InlineError message={janLookupError} />
-                ) : null}
-
-                <div className="space-y-2">
-                  <Label htmlFor="pantry-category">カテゴリ（必須）</Label>
-                  <select
-                    id="pantry-category"
-                    value={addForm.category}
-                    onChange={(event) => {
-                      setAddForm((current) => ({
-                        ...current,
-                        category: event.target.value,
-                      }));
-                    }}
-                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-                    disabled={isPantryAddSubmitting || isCategoriesLoading}
-                  >
-                    <option value="">カテゴリを選択してください</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                  {categoriesError ? (
-                    <InlineError
-                      message={categoriesError}
-                      onRetry={() => {
-                        void loadCategories();
-                      }}
-                      disabled={isCategoriesLoading}
-                    />
-                  ) : null}
-                </div>
-
-                {pantryAddError ? (
-                  <InlineError message={pantryAddError} />
-                ) : null}
-
-                <div className="flex flex-wrap gap-2">
-                  <Button type="submit" disabled={!canSubmitPantryItem}>
-                    {isPantryAddSubmitting ? (
-                      <Loader2 className="mr-1 size-4 animate-spin" />
-                    ) : null}
-                    食材を追加
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setAddForm(INITIAL_PANTRY_ADD_FORM);
-                      setSuggestions([]);
-                      setPantryAddError(null);
-                      setJanLookupError(null);
-                      setSuggestionsError(null);
-                    }}
-                    disabled={isPantryAddSubmitting}
-                  >
-                    入力をクリア
-                  </Button>
-                </div>
-              </form>
-            </div>
-          ) : null}
-        </section>
-
         <section className="space-y-3" aria-live="polite">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -684,28 +517,58 @@ export function PantryField() {
               <div className="pointer-events-none absolute inset-0 bg-white/20" />
 
               <div className="relative space-y-3 px-4 pt-18 pb-4 sm:px-5 sm:pt-18 sm:pb-5">
-                {visibleShelfItems.map((shelf, shelfIndex) => (
+                {shelfSlots.map((shelf, shelfIndex) => (
                   <div key={`shelf-${shelfIndex}`} className="space-y-2">
-                    <ul className="grid min-h-24 content-start gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                      {shelf.length > 0 ? (
-                        shelf.map((item) => (
+                    <ul className="grid min-h-24 grid-cols-3 content-start gap-2">
+                      {shelf.map((slot, slotIndex) => {
+                        if (slot === ADD_BUTTON_SLOT) {
+                          return (
+                            <li key={`slot-add-${shelfIndex}-${slotIndex}`}>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                className="h-full min-h-16 w-full rounded-lg border border-dashed border-cyan-500/45 bg-white/70 p-0 text-cyan-700 transition-colors hover:bg-cyan-50"
+                                onClick={() => {
+                                  setIsAddDialogOpen(true);
+                                  setPantryAddError(null);
+                                }}
+                                aria-label="食材を追加する"
+                              >
+                                <span className="flex flex-col items-center justify-center gap-1">
+                                  <span className="flex size-7 items-center justify-center rounded-full border border-cyan-500/40 bg-cyan-100/70">
+                                    <FiPlus className="size-4" />
+                                  </span>
+                                  <span className="text-[11px] font-medium">
+                                    追加
+                                  </span>
+                                </span>
+                              </Button>
+                            </li>
+                          );
+                        }
+
+                        if (slot === null) {
+                          return (
+                            <li
+                              key={`slot-empty-${shelfIndex}-${slotIndex}`}
+                              className="min-h-16 rounded-lg border border-dashed border-slate-300/50 bg-white/35"
+                              aria-hidden="true"
+                            />
+                          );
+                        }
+
+                        return (
                           <PantryChip
-                            key={item.id}
-                            item={item}
-                            isDeleting={deletingPantryItemId === item.id}
+                            key={slot.id}
+                            item={slot}
+                            isDeleting={deletingPantryItemId === slot.id}
                             disableDelete={deletingPantryItemId !== null}
                             onDelete={(pantryItemId) => {
                               void handleDeletePantryItem(pantryItemId);
                             }}
                           />
-                        ))
-                      ) : (
-                        <li className="rounded-md border border-dashed border-slate-400/35 bg-white/40 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
-                          {pantryItems.length === 0 && shelfIndex === 0
-                            ? "まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。"
-                            : "空き棚"}
-                        </li>
-                      )}
+                        );
+                      })}
                     </ul>
                   </div>
                 ))}
@@ -713,6 +576,173 @@ export function PantryField() {
             </div>
           )}
         </section>
+
+        <Dialog
+          open={isAddDialogOpen}
+          onOpenChange={(open) => {
+            setIsAddDialogOpen(open);
+            if (!open) {
+              setPantryAddError(null);
+            }
+          }}
+        >
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>食材を追加</DialogTitle>
+              <DialogDescription>
+                食材名・JANコード・カテゴリを入力して冷蔵庫に追加します。
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="space-y-4" onSubmit={handleSubmitPantryItem}>
+              <div className="space-y-2">
+                <Label htmlFor="pantry-dialog-name">食材名（必須）</Label>
+                <Input
+                  id="pantry-dialog-name"
+                  value={addForm.name}
+                  onChange={(event) => {
+                    setAddForm((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }));
+                  }}
+                  placeholder="例: たまねぎ"
+                  autoComplete="off"
+                  disabled={isPantryAddSubmitting}
+                />
+                {addForm.name.trim().length > 0 ? (
+                  <div className="space-y-1">
+                    {isSuggestionsLoading ? (
+                      <p className="text-muted-foreground text-xs">
+                        候補を取得しています...
+                      </p>
+                    ) : null}
+                    {suggestionsError ? (
+                      <InlineError
+                        message={suggestionsError}
+                        className="text-xs"
+                      />
+                    ) : null}
+                    {!isSuggestionsLoading &&
+                    !suggestionsError &&
+                    suggestions.length > 0 ? (
+                      <ul className="max-h-36 space-y-1 overflow-y-auto rounded-md border p-2">
+                        {suggestions.map((suggestion) => (
+                          <li key={suggestion}>
+                            <button
+                              type="button"
+                              className="hover:bg-accent w-full rounded-md px-2 py-1 text-left text-sm transition-colors"
+                              onClick={() => {
+                                setAddForm((current) => ({
+                                  ...current,
+                                  name: suggestion,
+                                }));
+                                setSuggestions([]);
+                              }}
+                              disabled={isPantryAddSubmitting}
+                            >
+                              {suggestion}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                <div className="space-y-2">
+                  <Label htmlFor="pantry-dialog-jan-code">
+                    JANコード（任意）
+                  </Label>
+                  <Input
+                    id="pantry-dialog-jan-code"
+                    value={addForm.janCode}
+                    onChange={(event) => {
+                      setAddForm((current) => ({
+                        ...current,
+                        janCode: event.target.value,
+                      }));
+                    }}
+                    placeholder="例: 4901234567890"
+                    inputMode="numeric"
+                    disabled={isPantryAddSubmitting || isJanLookupLoading}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsJanScannerOpen(true);
+                  }}
+                  disabled={isPantryAddSubmitting || isJanLookupLoading}
+                >
+                  JANコードを読み取る
+                </Button>
+              </div>
+
+              {janLookupError ? <InlineError message={janLookupError} /> : null}
+
+              <div className="space-y-2">
+                <Label htmlFor="pantry-dialog-category">カテゴリ（必須）</Label>
+                <select
+                  id="pantry-dialog-category"
+                  value={addForm.category}
+                  onChange={(event) => {
+                    setAddForm((current) => ({
+                      ...current,
+                      category: event.target.value,
+                    }));
+                  }}
+                  className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+                  disabled={isPantryAddSubmitting || isCategoriesLoading}
+                >
+                  <option value="">カテゴリを選択してください</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                {categoriesError ? (
+                  <InlineError
+                    message={categoriesError}
+                    onRetry={() => {
+                      void loadCategories();
+                    }}
+                    disabled={isCategoriesLoading}
+                  />
+                ) : null}
+              </div>
+
+              {pantryAddError ? <InlineError message={pantryAddError} /> : null}
+
+              <div className="flex flex-wrap gap-2">
+                <Button type="submit" disabled={!canSubmitPantryItem}>
+                  {isPantryAddSubmitting ? (
+                    <Loader2 className="mr-1 size-4 animate-spin" />
+                  ) : null}
+                  食材を追加
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setAddForm(INITIAL_PANTRY_ADD_FORM);
+                    setSuggestions([]);
+                    setPantryAddError(null);
+                    setJanLookupError(null);
+                    setSuggestionsError(null);
+                  }}
+                  disabled={isPantryAddSubmitting}
+                >
+                  入力をクリア
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         <JanCodeScannerDialog
           open={isJanScannerOpen}
