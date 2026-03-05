@@ -18,99 +18,6 @@ const DEFAULT_SEARCH_CONDITIONS: ItemSearchConditions = {
   q: undefined,
 };
 
-const dummyItems: ItemViewForBuyer[] = [
-  {
-    id: "00000000-0000-4000-8000-000000000301",
-    name: "いちご",
-    imageUrl: "/mock/food_01.jpg",
-    price: { regular: 420, discount: 420 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000302",
-    name: "野菜セット",
-    imageUrl: "/mock/food_02.jpg",
-    price: { regular: 580, discount: 450 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000303",
-    name: "パン",
-    imageUrl: "/mock/food_03.jpg",
-    price: { regular: 230, discount: 150 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000304",
-    name: "ぶどう",
-    imageUrl: "/mock/food_04.jpg",
-    price: { regular: 700, discount: 520 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000305",
-    name: "オレンジ",
-    imageUrl: "/mock/food_05.jpg",
-    price: { regular: 360, discount: 280 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000301",
-    name: "いちご",
-    imageUrl: "/mock/food_01.jpg",
-    price: { regular: 420, discount: 420 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000302",
-    name: "野菜セット",
-    imageUrl: "/mock/food_02.jpg",
-    price: { regular: 580, discount: 450 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000303",
-    name: "パン",
-    imageUrl: "/mock/food_03.jpg",
-    price: { regular: 230, discount: 150 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000304",
-    name: "ぶどう",
-    imageUrl: "/mock/food_04.jpg",
-    price: { regular: 700, discount: 520 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000305",
-    name: "オレンジ",
-    imageUrl: "/mock/food_05.jpg",
-    price: { regular: 360, discount: 280 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000301",
-    name: "いちご",
-    imageUrl: "/mock/food_01.jpg",
-    price: { regular: 420, discount: 420 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000302",
-    name: "野菜セット",
-    imageUrl: "/mock/food_02.jpg",
-    price: { regular: 580, discount: 450 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000303",
-    name: "パン",
-    imageUrl: "/mock/food_03.jpg",
-    price: { regular: 230, discount: 150 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000304",
-    name: "ぶどう",
-    imageUrl: "/mock/food_04.jpg",
-    price: { regular: 700, discount: 520 },
-  } as ItemViewForBuyer,
-  {
-    id: "00000000-0000-4000-8000-000000000305",
-    name: "オレンジ",
-    imageUrl: "/mock/food_05.jpg",
-    price: { regular: 360, discount: 280 },
-  } as ItemViewForBuyer,
-];
-
 export function ItemsPanel() {
   const [conditions, setConditions] = useState<ItemSearchConditions>(
     DEFAULT_SEARCH_CONDITIONS,
@@ -137,7 +44,7 @@ export function ItemsPanel() {
         // setErrorMessage(
         //   "商品の取得に失敗しました。時間をおいて再試行してください。",
         // );
-        setItems(dummyItems);
+        setItems([]);
       } finally {
         setIsLoading(false);
       }
