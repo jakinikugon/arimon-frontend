@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={notoSans.variable}>
       <body className="flex justify-center bg-gray-100 antialiased">
-        <div className="min-h-screen w-full max-w-135 bg-gray-100 pb-24 shadow-sm">
+        <div className="min-h-screen w-full max-w-135 bg-gray-100 shadow-sm">
           <Header />
           {children}
         </div>
