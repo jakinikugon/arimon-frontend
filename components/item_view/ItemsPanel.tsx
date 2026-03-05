@@ -41,9 +41,9 @@ export function ItemsPanel() {
         );
         setItems(response);
       } catch {
-        // setErrorMessage(
-        //   "商品の取得に失敗しました。時間をおいて再試行してください。",
-        // );
+        setErrorMessage(
+          "商品の取得に失敗しました。時間をおいて再試行してください。",
+        );
         setItems([]);
       } finally {
         setIsLoading(false);
