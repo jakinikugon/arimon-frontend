@@ -13,19 +13,17 @@ import { AccountField } from "./AccountField";
 import { LoginButton } from "./LoginButton";
 
 export function Header() {
-  const [isSessionChecked, setIsSessionChecked] = useState<boolean | null>(
-    null,
-  );
+  const [isLogin, setIsLogin] = useState<boolean | null>(null);
   const [userName, setUserName] = useState<UserName | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await authSession();
-        setIsSessionChecked(true);
+        setIsLogin(true);
         setUserName(res.userName);
       } catch {
-        setIsSessionChecked(true);
+        setIsLogin(true);
         setUserName(null);
       }
     };
@@ -45,9 +43,9 @@ export function Header() {
             className="mr-3 -mb-2"
           />
         </Link>
-        {isSessionChecked === true ? (
+        {isLogin === true ? (
           <AccountField userName={userName} />
-        ) : isSessionChecked === false ? (
+        ) : isLogin === false ? (
           <LoginButton />
         ) : (
           <div />
