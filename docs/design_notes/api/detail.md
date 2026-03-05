@@ -514,6 +514,8 @@ type BuyersMeReportsGetResponse = Reports;
 - 購入報告の作成
 - 関数名：PostBuyersMeReports
 - レスポンスは作成された商品 ID と報告日時
+- チラシ 1 枚 = 商品 1 つ
+- 1 チラシにつき報告できるのは 1 度のみ
 
 ```ts
 type BuyersMeReportsPostRequest = {
@@ -664,6 +666,7 @@ type BuyersMeChatMessagesPostResponse = Chat;
 #### GET `/api/buyers/me/chat/recipes`
 
 - チャットで提案されたレシピの取得
+- タブ2 を押したら発火する（リクエストを投げる）
 - 関数名：GetBuyersMeChatRecipes
 
 ```ts
@@ -1042,7 +1045,7 @@ type ItemsDetailsGetResponse = ItemDetailForBuyer;
 - 冷蔵庫食材名の補完候補の取得
 - クエリパラメータは `q` を想定(例: `q=牛` など)
 - レスポンスは以下のような形式
-- DB 向け情報: categories で検索する
+- DB 向け情報: `pantry_suggestion_terms`で検索する
 - 関数名：GetPantrySuggestionsQuery
 
 ```ts
