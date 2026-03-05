@@ -25,6 +25,7 @@ export function ItemCardForBuyer({ item, onClick }: ItemCardForBuyerProps) {
           src={item.imageUrl}
           alt={item.name}
           fill
+          sizes="33vw"
           className="object-cover transition group-hover:scale-[1.02]"
         />
         <div className="absolute inset-x-0 bottom-0 bg-black/30 px-2 py-0.5">
