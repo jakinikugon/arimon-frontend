@@ -57,9 +57,7 @@
 ### 5.1 API 呼び出しの統一
 
 - 画面から直接 `fetch` しない。`services/*` を経由する
-- URL 生成は `backendApiUrl` を使う
-- クエリ文字列は `queryString` を使う
-- 認証 API（register/login/logout/refresh）以外は原則 `fetcher` を使う
+- ただし、認証関係は`lib/auth`の関数を呼び出す
 
 ### 5.2 型の統一
 
@@ -83,14 +81,14 @@
 参照: `docs/design_notes/api/detail.md`
 
 - 空レスポンスは 204
-- 401 時は `POST /api/auth/refresh` 後に再試行
+- 401 時は`fetcher` 内で `POST /api/auth/refresh` を呼び出すため、基本的に再試行は不要。
 - buyer 専用: `/api/buyers/me/**`
 - store 専用: `/api/stores/me/**`
 - 公開 endpoint は認証不要（items, stores/{id}, categories, jan, pantry/suggestions, upload）
 
 ---
 
-## 6. Codex 作業時の必須チェック
+## 6. 作業時の必須チェック
 
 変更ごとに最低限次を実行する。
 
