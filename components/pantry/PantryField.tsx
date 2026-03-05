@@ -174,7 +174,7 @@ function InlineError({
 
 function PantryListSkeleton() {
   return (
-    <div className="rounded-[1.75rem] border border-cyan-400/40 bg-gradient-to-b from-cyan-50/95 via-white/95 to-sky-100/90 p-4">
+    <div className="rounded-[1.75rem] border border-cyan-400/40 bg-linear-to-b from-cyan-50/95 via-white/95 to-sky-100/90 p-4">
       <div className="space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
         <div className="space-y-2">
           <Skeleton className="h-16 w-full rounded-xl" />
@@ -759,4 +759,3 @@ export function PantryField() {
     </Card>
   );
 }
-
