@@ -10,7 +10,9 @@ import {
 } from "react";
 import { FiPlus } from "react-icons/fi";
 
+import fridgeInteriorImage from "@/public/images/pantry/fridge-interior.png";
 import { Loader2, Trash2, XCircle } from "lucide-react";
+import Image from "next/image";
 
 import type { ItemCategory, PantryItem, PantryItemId } from "@/types/domain";
 import type { JanCode } from "@/types/utility/scalars";
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
@@ -70,6 +73,7 @@ const INITIAL_PANTRY_ADD_FORM: PantryAddForm = {
 };
 
 const PANTRY_ITEMS_PER_SHELF = 3;
+const VISIBLE_FRIDGE_SHELF_COUNT = 4;
 
 const PANTRY_CATEGORY_BADGE_STYLES = [
   "border-emerald-500/35 bg-emerald-500/15 text-emerald-700",
@@ -427,7 +431,7 @@ export function PantryField() {
   const visibleShelfItems = useMemo(() => {
     const shelves = pantryShelves.length > 0 ? [...pantryShelves] : [[]];
 
-    while (shelves.length < 2) {
+    while (shelves.length < VISIBLE_FRIDGE_SHELF_COUNT) {
       shelves.push([]);
     }
 
@@ -672,45 +676,47 @@ export function PantryField() {
 
           {isPantryLoading ? (
             <PantryListSkeleton />
-          ) : pantryItems.length === 0 ? (
-            <div className="rounded-[1.75rem] border border-cyan-400/40 bg-gradient-to-b from-cyan-50/95 via-white/95 to-sky-100/85 p-4 text-sm">
-              <div className="rounded-2xl border border-dashed border-cyan-500/45 bg-white/75 px-4 py-6 text-center">
-                <p className="text-muted-foreground">
-                  まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。
-                </p>
-              </div>
-            </div>
           ) : (
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-cyan-400/45 bg-gradient-to-b from-sky-100/90 via-white/95 to-cyan-100/90 p-3 shadow-inner sm:p-4">
-              <div className="pointer-events-none absolute inset-y-2 left-2 w-4 rounded-full bg-gradient-to-r from-cyan-400/40 to-transparent" />
-              <div className="pointer-events-none absolute inset-y-2 right-2 w-4 rounded-full bg-gradient-to-l from-cyan-400/40 to-transparent" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-cyan-400/45 shadow-inner">
+              <Image
+                src={fridgeInteriorImage}
+                alt=""
+                fill
+                sizes="(min-width: 768px) 768px, 100vw"
+                className="pointer-events-none object-cover select-none"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-white/20" />
 
-              <div className="relative space-y-3 rounded-2xl border border-white/80 bg-white/55 p-3 shadow-inner">
-                {visibleShelfItems.map((shelf, shelfIndex) => (
-                  <div key={`shelf-${shelfIndex}`} className="space-y-2">
-                    <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                      {shelf.length > 0 ? (
-                        shelf.map((item) => (
-                          <PantryChip
-                            key={item.id}
-                            item={item}
-                            isDeleting={deletingPantryItemId === item.id}
-                            disableDelete={deletingPantryItemId !== null}
-                            onDelete={(pantryItemId) => {
-                              void handleDeletePantryItem(pantryItemId);
-                            }}
-                          />
-                        ))
-                      ) : (
-                        <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
-                          食材がありません
-                        </li>
-                      )}
-                    </ul>
-                    <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
-                  </div>
-                ))}
-              </div>
+              <ScrollArea className="relative h-[30rem]">
+                <div className="space-y-3 p-4 sm:p-5">
+                  {visibleShelfItems.map((shelf, shelfIndex) => (
+                    <div key={`shelf-${shelfIndex}`} className="space-y-2">
+                      <ul className="grid min-h-24 content-start gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                        {shelf.length > 0 ? (
+                          shelf.map((item) => (
+                            <PantryChip
+                              key={item.id}
+                              item={item}
+                              isDeleting={deletingPantryItemId === item.id}
+                              disableDelete={deletingPantryItemId !== null}
+                              onDelete={(pantryItemId) => {
+                                void handleDeletePantryItem(pantryItemId);
+                              }}
+                            />
+                          ))
+                        ) : (
+                          <li className="rounded-md border border-dashed border-slate-400/35 bg-white/70 px-2 py-3 text-center text-xs text-slate-500 sm:col-span-2 lg:col-span-3">
+                            {pantryItems.length === 0 && shelfIndex === 0
+                              ? "まだ食材が登録されていません。上の「冷蔵庫に食材を追加する」から追加してください。"
+                              : "空き棚"}
+                          </li>
+                        )}
+                      </ul>
+                      <div className="h-2 rounded-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 shadow-inner" />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
           )}
         </section>
