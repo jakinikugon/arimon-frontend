@@ -531,9 +531,11 @@ export function PantryField() {
             </div>
           </div>
           {isDeleteSelectionMode ? (
-            <p className="text-xs text-red-700">
-              削除したい食材をタップしてください。
-            </p>
+            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+              <p>
+                削除したい食材カードをタップすると削除されます。終了するには右上のゴミ箱ボタンをもう一度押してください。
+              </p>
+            </div>
           ) : null}
 
           {pantryError ? (
