@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
 import {
   localDeleteBuyersMePantry as deleteBuyersMePantry,
   localGetBuyersMePantry as getBuyersMePantry,
@@ -122,6 +123,7 @@ export function PantryField() {
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [isJanLookupLoading, setIsJanLookupLoading] = useState(false);
   const [isPantryAddSubmitting, setIsPantryAddSubmitting] = useState(false);
+  const [isJanScannerOpen, setIsJanScannerOpen] = useState(false);
 
   const [pantryError, setPantryError] = useState<string | null>(null);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
@@ -218,8 +220,8 @@ export function PantryField() {
     };
   }, []);
 
-  const handleLookupJan = useCallback(async () => {
-    const janCode = addForm.janCode.trim();
+  const fillFormFromJanCode = useCallback(async (rawJanCode: string) => {
+    const janCode = rawJanCode.trim();
 
     if (!janCode) {
       setJanLookupError("JANコードを入力してください。");
@@ -233,6 +235,7 @@ export function PantryField() {
       const response = await getJan(janCode as JanCode);
       setAddForm((current) => ({
         ...current,
+        janCode,
         name: response.name,
         category: response.category,
       }));
@@ -245,7 +248,7 @@ export function PantryField() {
     } finally {
       setIsJanLookupLoading(false);
     }
-  }, [addForm.janCode]);
+  }, []);
 
   const handleSubmitPantryItem = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -395,14 +398,11 @@ export function PantryField() {
               type="button"
               variant="outline"
               onClick={() => {
-                void handleLookupJan();
+                setIsJanScannerOpen(true);
               }}
               disabled={isPantryAddSubmitting || isJanLookupLoading}
             >
-              {isJanLookupLoading ? (
-                <Loader2 className="mr-1 size-4 animate-spin" />
-              ) : null}
-              JANで自動入力
+              JANコードを読み取る
             </Button>
           </div>
 
@@ -539,6 +539,17 @@ export function PantryField() {
             </ul>
           )}
         </section>
+
+        <JanCodeScannerDialog
+          open={isJanScannerOpen}
+          onOpenChange={setIsJanScannerOpen}
+          onDetected={(janCode) => {
+            void fillFormFromJanCode(janCode);
+          }}
+          onError={(message) => {
+            setJanLookupError(message);
+          }}
+        />
       </CardContent>
     </Card>
   );
