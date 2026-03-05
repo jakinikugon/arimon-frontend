@@ -161,7 +161,6 @@ export function ItemsPanel() {
       {errorMessage && (
         <p className="text-destructive mb-2 text-xs font-medium">
           {errorMessage}
-          {JSON.stringify(conditions)}
         </p>
       )}
       {isLoading ? (
