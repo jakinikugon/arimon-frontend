@@ -8,7 +8,7 @@ import { createMetadata } from "@/lib/metadate";
 
 import { Header } from "@/components/layout/header";
 
-import "../globals.css";
+import "../../globals.css";
 
 // モックを有効化
 if (EnvConfig.util.enableMocks) {
@@ -33,7 +33,6 @@ export default function RootLayout({
     <html lang="ja" className={notoSans.variable}>
       <body className="flex justify-center bg-gray-100 antialiased">
         <div className="min-h-screen w-full max-w-135 bg-gray-400 shadow-sm">
-          <Header />
           {children}
         </div>
       </body>

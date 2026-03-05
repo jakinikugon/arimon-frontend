@@ -91,7 +91,7 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          className="bg-brand-main-600 hover:bg-brand-main-700 w-full text-white"
+          className="bg-brand-main-400 hover:bg-brand-main-700 w-full text-white"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? "ログイン中..." : "ログイン"}
@@ -100,7 +100,7 @@ export function LoginForm() {
 
       <p className="mt-4 text-center text-sm text-gray-600">
         アカウントをお持ちでないですか？{" "}
-        <Link href="/register" className="text-brand-main-600 hover:underline">
+        <Link href="/register" className="text-brand-main-400 hover:underline">
           新規作成
         </Link>
       </p>
