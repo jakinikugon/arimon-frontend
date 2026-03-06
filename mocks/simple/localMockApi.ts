@@ -388,7 +388,7 @@ export async function localGetBuyersMeChatMessages() {
 }
 
 export async function localPostBuyersMeChatMessages(content: string) {
-  await wait(220);
+  await wait(1400);
 
   const userMessage: ChatMessage = {
     role: "user",

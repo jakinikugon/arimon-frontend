@@ -270,14 +270,35 @@ export function ChatField() {
         return;
       }
 
+      const optimisticUserMessage: ChatMessage = {
+        role: "user",
+        content,
+        recipes: null,
+      };
+
+      setChatMessages((current) => [...current, optimisticUserMessage]);
+      setChatInput("");
       setIsChatSubmitting(true);
       setChatSubmitError(null);
 
       try {
         const response = await postBuyersMeChatMessages(content);
-        setChatMessages(response.messages);
-        setChatInput("");
+        const latestAssistantMessage = [...response.messages]
+          .reverse()
+          .find((message) => message.role === "assistant");
+
+        if (latestAssistantMessage) {
+          setChatMessages((current) => [...current, latestAssistantMessage]);
+        }
       } catch {
+        setChatMessages((current) =>
+          current.filter((message, index) => {
+            if (index !== current.length - 1) {
+              return true;
+            }
+            return !(message.role === "user" && message.content === content);
+          }),
+        );
         setChatSubmitError("メッセージ送信に失敗しました。");
       } finally {
         setIsChatSubmitting(false);
