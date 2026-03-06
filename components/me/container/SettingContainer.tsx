@@ -16,7 +16,7 @@ interface AllergenListProps {
 function AllergenDisplay({ allergens }: AllergenListProps) {
   return (
     <div className="space-y-1">
-      <p className="text-xs text-gray-600">その他:</p>
+      <p className="text-xs text-gray-600">アレルゲン:</p>
       <p className="rounded-md bg-gray-50 px-3 py-2 text-sm whitespace-pre-wrap text-gray-700">
         {allergens.length > 0
           ? allergens.map((allergen) => ALLERGEN_DATA[allergen]).join(", ")
@@ -36,7 +36,7 @@ function PromptDisplay({ prompt }: PromptDisplayProps) {
   }
   return (
     <div className="space-y-1">
-      <p className="text-xs text-gray-600">アレルゲン:</p>
+      <p className="text-xs text-gray-600">その他:</p>
       <p className="rounded-md bg-gray-50 px-3 py-2 text-sm whitespace-pre-wrap text-gray-700">
         {prompt}
       </p>
