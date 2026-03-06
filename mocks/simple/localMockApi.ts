@@ -26,61 +26,7 @@ let pantryStore: Pantry = {
 };
 
 let chatStore: Chat = {
-  messages: [
-    {
-      role: "user",
-      content: "今夜は時短で作れるメニューがいいです。",
-      recipes: null,
-    },
-    {
-      role: "assistant",
-      content: "冷蔵庫の食材を踏まえて、まずは作りやすい献立を2件提案します。",
-      recipes: [
-        {
-          title: "たまごミルクスープ",
-          description: "卵と牛乳を使って10分で作れるやさしいスープです。",
-          materials: [
-            {
-              name: "卵",
-              query: "卵",
-              inPantry: true,
-            },
-            {
-              name: "牛乳",
-              query: "牛乳",
-              inPantry: true,
-            },
-            {
-              name: "コンソメ",
-              query: "コンソメ",
-              inPantry: false,
-            },
-          ],
-        },
-        {
-          title: "オニオンオムレツ",
-          description: "たまねぎの甘みを活かした簡単オムレツです。",
-          materials: [
-            {
-              name: "たまねぎ",
-              query: "たまねぎ",
-              inPantry: true,
-            },
-            {
-              name: "卵",
-              query: "卵",
-              inPantry: true,
-            },
-            {
-              name: "バター",
-              query: "バター",
-              inPantry: false,
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  messages: [],
 };
 
 type RecipeTemplate = {
