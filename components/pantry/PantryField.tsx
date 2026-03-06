@@ -11,6 +11,14 @@ import {
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
+import {
+  deleteBuyersMePantry,
+  getBuyersMePantry,
+  getCategories,
+  getJan,
+  getPantrySuggestionsQuery,
+  postBuyersMePantry,
+} from "@/services";
 import { Loader2, XCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -38,25 +46,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import {
-  localDeleteBuyersMePantry as deleteBuyersMePantry,
-  localGetBuyersMePantry as getBuyersMePantry,
-  localGetCategories as getCategories,
-  localGetJan as getJan,
-  localGetPantrySuggestionsQuery as getPantrySuggestionsQuery,
-  localPostBuyersMePantry as postBuyersMePantry,
-} from "../../mocks/simple/localMockApi";
-import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
-
 // import {
-//   deleteBuyersMePantry,
-//   getBuyersMePantry,
-//   getCategories,
-//   getJan,
-//   getPantrySuggestionsQuery,
-//   postBuyersMePantry,
-// } from "@/services";
-// import { Loader2, Trash2, XCircle } from "lucide-react";
+//   localDeleteBuyersMePantry as deleteBuyersMePantry,
+//   localGetBuyersMePantry as getBuyersMePantry,
+//   localGetCategories as getCategories,
+//   localGetJan as getJan,
+//   localGetPantrySuggestionsQuery as getPantrySuggestionsQuery,
+//   localPostBuyersMePantry as postBuyersMePantry,
+// } from "../../mocks/simple/localMockApi";
+import { JanCodeScannerDialog } from "./JanCodeScannerDialog";
 
 type PantryAddForm = {
   name: string;
