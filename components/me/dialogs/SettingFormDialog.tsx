@@ -5,7 +5,6 @@ import type { Dispatch, SetStateAction } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { MdEdit } from "react-icons/md";
 
-import { patchBuyersMe } from "@/services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -25,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
+import { patchBuyersMe } from "@/mocks/demo/buyers";
 
 import { AllergenToggleGroup } from "./AllergenToggleGroup";
 
