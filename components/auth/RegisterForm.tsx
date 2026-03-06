@@ -11,7 +11,7 @@ import { z } from "zod";
 import type { AccountType } from "@/types/domain";
 import type { Email, Password } from "@/types/utility/scalars";
 
-import { authRegister } from "@/services/auth/register";
+import { register } from "@/lib/auth/register";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,12 +51,12 @@ export function RegisterForm() {
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(null);
     try {
-      const result = await authRegister(
+      await register(
         values.email as Email,
         values.password as Password,
         values.accountType,
       );
-      router.push(result.accountType === "store" ? "/store/me" : "/me");
+      router.push(values.accountType === "store" ? "/store/me" : "/me");
     } catch {
       setSubmitError(
         "登録に失敗しました。入力内容を確認して再度お試しください。",
