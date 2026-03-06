@@ -181,6 +181,9 @@ const RECIPE_TEMPLATE_GROUPS: Record<string, RecipeTemplate[]> = {
 
 const categoryStore: ItemCategory[] = [
   "野菜",
+  "果物",
+  "飲料",
+  "インスタント食品",
   "卵・乳製品",
   "肉",
   "魚",
@@ -197,6 +200,27 @@ const suggestionCandidates = [
   "鶏むね肉",
   "食パン",
 ];
+
+const JAN_ITEM_MASTER: Record<
+  string,
+  {
+    name: string;
+    category: ItemCategory;
+  }
+> = {
+  "4908819940721": {
+    name: "さが美人",
+    category: "果物",
+  },
+  "4901340689312": {
+    name: "カルピス",
+    category: "飲料",
+  },
+  "4901734057826": {
+    name: "博多ShinShin",
+    category: "インスタント食品",
+  },
+};
 
 let pantrySequence = 299;
 
@@ -363,25 +387,13 @@ export async function localGetPantrySuggestionsQuery(
 export async function localGetJan(janCode: JanCode) {
   await wait(120);
   const text = String(janCode);
+  const item = JAN_ITEM_MASTER[text];
 
-  if (text.endsWith("1")) {
-    return {
-      name: "牛乳",
-      category: "卵・乳製品" as ItemCategory,
-    };
+  if (!item) {
+    throw new Error("JAN code not found in local mock");
   }
 
-  if (text.endsWith("2")) {
-    return {
-      name: "卵",
-      category: "卵・乳製品" as ItemCategory,
-    };
-  }
-
-  return {
-    name: "たまねぎ",
-    category: "野菜" as ItemCategory,
-  };
+  return item;
 }
 
 export async function localPostBuyersMePantry(
