@@ -26,61 +26,7 @@ let pantryStore: Pantry = {
 };
 
 let chatStore: Chat = {
-  messages: [
-    {
-      role: "user",
-      content: "今夜は時短で作れるメニューがいいです。",
-      recipes: null,
-    },
-    {
-      role: "assistant",
-      content: "冷蔵庫の食材を踏まえて、まずは作りやすい献立を2件提案します。",
-      recipes: [
-        {
-          title: "たまごミルクスープ",
-          description: "卵と牛乳を使って10分で作れるやさしいスープです。",
-          materials: [
-            {
-              name: "卵",
-              query: "卵",
-              inPantry: true,
-            },
-            {
-              name: "牛乳",
-              query: "牛乳",
-              inPantry: true,
-            },
-            {
-              name: "コンソメ",
-              query: "コンソメ",
-              inPantry: false,
-            },
-          ],
-        },
-        {
-          title: "オニオンオムレツ",
-          description: "たまねぎの甘みを活かした簡単オムレツです。",
-          materials: [
-            {
-              name: "たまねぎ",
-              query: "たまねぎ",
-              inPantry: true,
-            },
-            {
-              name: "卵",
-              query: "卵",
-              inPantry: true,
-            },
-            {
-              name: "バター",
-              query: "バター",
-              inPantry: false,
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  messages: [],
 };
 
 type RecipeTemplate = {
@@ -181,6 +127,9 @@ const RECIPE_TEMPLATE_GROUPS: Record<string, RecipeTemplate[]> = {
 
 const categoryStore: ItemCategory[] = [
   "野菜",
+  "果物",
+  "飲料",
+  "インスタント食品",
   "卵・乳製品",
   "肉",
   "魚",
@@ -197,6 +146,27 @@ const suggestionCandidates = [
   "鶏むね肉",
   "食パン",
 ];
+
+const JAN_ITEM_MASTER: Record<
+  string,
+  {
+    name: string;
+    category: ItemCategory;
+  }
+> = {
+  "4908819940721": {
+    name: "さが美人",
+    category: "果物",
+  },
+  "4901340689312": {
+    name: "カルピス",
+    category: "飲料",
+  },
+  "4901734057826": {
+    name: "博多ShinShin",
+    category: "インスタント食品",
+  },
+};
 
 let pantrySequence = 299;
 
@@ -363,25 +333,13 @@ export async function localGetPantrySuggestionsQuery(
 export async function localGetJan(janCode: JanCode) {
   await wait(120);
   const text = String(janCode);
+  const item = JAN_ITEM_MASTER[text];
 
-  if (text.endsWith("1")) {
-    return {
-      name: "牛乳",
-      category: "卵・乳製品" as ItemCategory,
-    };
+  if (!item) {
+    throw new Error("JAN code not found in local mock");
   }
 
-  if (text.endsWith("2")) {
-    return {
-      name: "卵",
-      category: "卵・乳製品" as ItemCategory,
-    };
-  }
-
-  return {
-    name: "たまねぎ",
-    category: "野菜" as ItemCategory,
-  };
+  return item;
 }
 
 export async function localPostBuyersMePantry(

@@ -90,6 +90,18 @@ const PANTRY_CATEGORY_BADGE_STYLES = [
   "border-violet-500/35 bg-violet-500/15 text-violet-700",
 ] as const;
 
+const PANTRY_CATEGORY_BADGE_STYLE_MAP: Partial<Record<ItemCategory, string>> = {
+  野菜: "border-emerald-500/35 bg-emerald-500/15 text-emerald-700",
+  果物: "border-rose-500/35 bg-rose-500/15 text-rose-700",
+  飲料: "border-sky-500/35 bg-sky-500/15 text-sky-700",
+  インスタント食品: "border-amber-500/40 bg-amber-500/15 text-amber-700",
+  "卵・乳製品": "border-indigo-500/35 bg-indigo-500/15 text-indigo-700",
+  肉: "border-red-500/35 bg-red-500/15 text-red-700",
+  魚: "border-cyan-500/35 bg-cyan-500/15 text-cyan-700",
+  調味料: "border-orange-500/35 bg-orange-500/15 text-orange-700",
+  その他: "border-slate-500/35 bg-slate-500/15 text-slate-700",
+};
+
 type PantryShelfSlot = PantryItem | null | typeof ADD_BUTTON_SLOT;
 
 function buildPantryShelfSlots(items: PantryItem[]): PantryShelfSlot[][] {
@@ -130,6 +142,11 @@ function buildPantryShelfSlots(items: PantryItem[]): PantryShelfSlot[][] {
 }
 
 function getCategoryBadgeStyle(category: string): string {
+  const mappedStyle = PANTRY_CATEGORY_BADGE_STYLE_MAP[category as ItemCategory];
+  if (mappedStyle) {
+    return mappedStyle;
+  }
+
   const hash = Array.from(category).reduce((sum, character) => {
     return sum + character.charCodeAt(0);
   }, 0);
