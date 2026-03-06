@@ -9,6 +9,17 @@ import {
 } from "react";
 import { IoReload } from "react-icons/io5";
 
+// import {
+//   localGetBuyersMeChatMessages as getBuyersMeChatMessages,
+//   localGetBuyersMeChatRecipes as getBuyersMeChatRecipes,
+//   localPostBuyersMeChatMessages as postBuyersMeChatMessages,
+// } from "../../mocks/simple/localMockApi";
+
+import {
+  getBuyersMeChatMessages,
+  getBuyersMeChatRecipes,
+  postBuyersMeChatMessages,
+} from "@/services";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -35,19 +46,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-
-import {
-  localGetBuyersMeChatMessages as getBuyersMeChatMessages,
-  localGetBuyersMeChatRecipes as getBuyersMeChatRecipes,
-  localPostBuyersMeChatMessages as postBuyersMeChatMessages,
-} from "../../mocks/simple/localMockApi";
-
-// import {
-//   getBuyersMeChatMessages,
-//   getBuyersMeChatRecipes,
-//   postBuyersMeChatMessages,
-// } from "@/services";
-// import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 type InlineErrorProps = {
   message: string;
