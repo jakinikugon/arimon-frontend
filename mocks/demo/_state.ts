@@ -154,10 +154,10 @@ export const demoState: {
   buyer: {
     id: BUYER_ID,
     setting: {
-      buyerName: "Natsuki Sato",
-      allergens: ["egg", "milk"],
+      buyerName: "jakinikugon",
+      allergens: ["beef", "chicken", "yam", "squid"],
       prompt:
-        "平日の夕食を30分以内で作れる提案を優先し、子どもでも食べやすい味付けにしてください。",
+        "私は焼肉が好きですが、牛肉と鶏肉が食べられません。そんな私でも美味しく食べられるメニューを提案してください。",
     },
   },
   items: itemCatalog,
@@ -178,8 +178,8 @@ export const demoState: {
     ],
   },
   reports: {
-    totalCount: 2,
-    totalDiscount: 250,
+    totalCount: 56,
+    totalDiscount: 2060,
     items: [
       {
         item: {
@@ -196,6 +196,24 @@ export const demoState: {
           name: itemCatalog[1].name,
           imageUrl: itemCatalog[1].imageUrl,
           price: itemCatalog[1].price,
+        },
+        date: asTimestamp("2026-03-04T11:40:00.000Z"),
+      },
+      {
+        item: {
+          id: itemCatalog[3].id,
+          name: itemCatalog[3].name,
+          imageUrl: itemCatalog[3].imageUrl,
+          price: itemCatalog[3].price,
+        },
+        date: asTimestamp("2026-03-04T11:40:00.000Z"),
+      },
+      {
+        item: {
+          id: itemCatalog[2].id,
+          name: itemCatalog[2].name,
+          imageUrl: itemCatalog[2].imageUrl,
+          price: itemCatalog[2].price,
         },
         date: asTimestamp("2026-03-04T11:40:00.000Z"),
       },
