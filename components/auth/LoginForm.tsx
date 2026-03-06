@@ -10,7 +10,8 @@ import { z } from "zod";
 
 import type { Email, Password } from "@/types/utility/scalars";
 
-import { authLogin } from "@/services/auth/login";
+import { login } from "@/lib/auth/login";
+
 import { authSession } from "@/services/auth/session";
 
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ export function LoginForm() {
     setSubmitError(null);
 
     try {
-      await authLogin(values.email as Email, values.password as Password);
+      await login(values.email as Email, values.password as Password);
       const session = await authSession();
       router.push(session.accountType === "store" ? "/store/me" : "/me");
     } catch (error) {
