@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ItemDetailDialogProps {
   itemId: ItemId | null;
   onOpenChange: (open: boolean) => void;
+  fetchItemDetailById?: (itemId: ItemId) => Promise<ItemDetailForBuyer>;
 }
 
 function formatDateTime(iso: string): string {
@@ -33,6 +34,7 @@ function formatDateTime(iso: string): string {
 export function ItemDetailDialog({
   itemId,
   onOpenChange,
+  fetchItemDetailById = getItemsItemId,
 }: ItemDetailDialogProps) {
   const [itemDetail, setItemDetail] = useState<ItemDetailForBuyer | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,7 +55,7 @@ export function ItemDetailDialog({
       setErrorMessage(null);
 
       try {
-        const response = await getItemsItemId(itemId);
+        const response = await fetchItemDetailById(itemId);
         if (!isCancelled) {
           setItemDetail(response);
         }
@@ -74,7 +76,7 @@ export function ItemDetailDialog({
     return () => {
       isCancelled = true;
     };
-  }, [itemId]);
+  }, [fetchItemDetailById, itemId]);
 
   const hasDiscount =
     itemDetail !== null && itemDetail.price.discount < itemDetail.price.regular;
