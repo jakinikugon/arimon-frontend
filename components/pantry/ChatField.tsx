@@ -110,6 +110,33 @@ function RecipeListSkeleton() {
   );
 }
 
+function AssistantTypingIndicator() {
+  return (
+    <section
+      className="mr-auto max-w-[90%] space-y-2"
+      aria-live="polite"
+      aria-label="献立を生成中"
+    >
+      <article className="border-brand-main-100 bg-brand-main-50/15 rounded-xl border px-3 py-2 text-sm leading-relaxed shadow-xs">
+        <div className="text-muted-foreground flex items-center gap-2">
+          <span>献立を考えています</span>
+          <span className="flex items-end gap-1" aria-hidden="true">
+            <span className="bg-brand-main-500/80 size-1.5 rounded-full motion-safe:animate-bounce" />
+            <span
+              className="bg-brand-main-500/80 size-1.5 rounded-full motion-safe:animate-bounce"
+              style={{ animationDelay: "120ms" }}
+            />
+            <span
+              className="bg-brand-main-500/80 size-1.5 rounded-full motion-safe:animate-bounce"
+              style={{ animationDelay: "240ms" }}
+            />
+          </span>
+        </div>
+      </article>
+    </section>
+  );
+}
+
 type ChatTab = "chat" | "recipes";
 
 type RecipeAccordionProps = {
@@ -395,6 +422,7 @@ export function ChatField() {
                       </section>
                     );
                   })}
+                  {isChatSubmitting ? <AssistantTypingIndicator /> : null}
                 </div>
               )}
             </ScrollArea>
