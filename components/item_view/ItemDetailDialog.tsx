@@ -18,7 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ItemDetailDialogProps {
   itemId: ItemId | null;
   onOpenChange: (open: boolean) => void;
-  fetchItemDetailById?: (itemId: ItemId) => Promise<ItemDetailForBuyer>;
 }
 
 function formatDateTime(iso: string): string {
@@ -34,7 +33,6 @@ function formatDateTime(iso: string): string {
 export function ItemDetailDialog({
   itemId,
   onOpenChange,
-  fetchItemDetailById = getItemsItemId,
 }: ItemDetailDialogProps) {
   const [itemDetail, setItemDetail] = useState<ItemDetailForBuyer | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -55,7 +53,7 @@ export function ItemDetailDialog({
       setErrorMessage(null);
 
       try {
-        const response = await fetchItemDetailById(itemId);
+        const response = await getItemsItemId(itemId);
         if (!isCancelled) {
           setItemDetail(response);
         }
@@ -76,7 +74,7 @@ export function ItemDetailDialog({
     return () => {
       isCancelled = true;
     };
-  }, [fetchItemDetailById, itemId]);
+  }, [itemId]);
 
   const hasDiscount =
     itemDetail !== null && itemDetail.price.discount < itemDetail.price.regular;
@@ -87,7 +85,7 @@ export function ItemDetailDialog({
         <DialogTitle>商品詳細</DialogTitle>
         {isLoading ? (
           <div className="space-y-3">
-            <Skeleton className="aspect-[16/9] w-full" />
+            <Skeleton className="aspect-video w-full" />
             <Skeleton className="h-6 w-4/5" />
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-16 w-full" />
@@ -97,7 +95,7 @@ export function ItemDetailDialog({
         ) : itemDetail ? (
           <ScrollArea className="max-h-[70vh] pr-3">
             <div className="space-y-3">
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md bg-gray-100">
+              <div className="relative aspect-video w-full overflow-hidden rounded-md bg-gray-100">
                 <Image
                   src={itemDetail.imageUrl}
                   alt={itemDetail.name}
