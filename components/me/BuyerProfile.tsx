@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 
 import type { Buyer, Reports } from "@/types/domain";
 
-import { SquareMove2 } from "@/components/loader";
-import { LogoutButton } from "@/components/me/container/LogoutButton";
-
 import { logout } from "@/lib/auth/logout";
+
 import { getBuyersMe } from "@/services/buyers/me";
 import { getBuyersMeReports } from "@/services/buyers/me-reports";
+
+import { SquareMove2 } from "@/components/loader";
+import { LogoutButton } from "@/components/me/container/LogoutButton";
 
 import {
   ProfileContainer,
