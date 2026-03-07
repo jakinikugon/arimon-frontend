@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ItemId, ItemViewForBuyer } from "@/types/domain";
 
 import { ItemCard } from "./ItemCard";
-import { ItemDetailDialog } from "./ItemDetailDialog";
+import { ItemDetailDialog } from "./ItemDetailDialogNew";
 
 interface ItemListProps {
   items: ItemViewForBuyer[];
