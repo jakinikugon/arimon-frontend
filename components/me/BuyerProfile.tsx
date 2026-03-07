@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 
 import type { Buyer, Reports } from "@/types/domain";
 
+import { logout } from "@/lib/auth/logout";
+
+import { getBuyersMe } from "@/services/buyers/me";
+import { getBuyersMeReports } from "@/services/buyers/me-reports";
+
 import { SquareMove2 } from "@/components/loader";
 import { LogoutButton } from "@/components/me/container/LogoutButton";
-
-import { waitMockDelay } from "@/mocks/demo/_utils";
-import { getBuyersMe, getBuyersMeReports } from "@/mocks/demo/buyers";
 
 import {
   ProfileContainer,
@@ -78,7 +80,7 @@ export function BuyerProfile() {
   const handleLogout = async () => {
     try {
       setLogoutPending(true);
-      await waitMockDelay(180);
+      await logout();
       router.push("/");
       router.refresh();
     } finally {

@@ -12,6 +12,8 @@ import type { Allergen, Buyer } from "@/types/domain";
 
 import { ALLERGEN_DATA } from "@/constants/allergen";
 
+import { patchBuyersMe } from "@/services/buyers/me";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,8 +26,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-import { patchBuyersMe } from "@/mocks/demo/buyers";
 
 import { AllergenToggleGroup } from "./AllergenToggleGroup";
 
