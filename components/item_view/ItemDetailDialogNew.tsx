@@ -86,7 +86,7 @@ export function DetailCard({ item }: DetailCardProps) {
                     </DialogContent>
                   </Dialog>
                 </div>
-                <DialogHeader className="from-brand-main-400 to-brand-main-600 bg-gradient-to-r px-4 py-3 text-left text-white">
+                <DialogHeader className="from-brand-main-400 to-brand-main-600 bg-liner-to-r px-4 py-3 text-left text-white">
                   <DialogTitle className="text-2xl font-bold">
                     {item.name}
                   </DialogTitle>
