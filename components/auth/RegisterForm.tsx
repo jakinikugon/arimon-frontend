@@ -5,13 +5,14 @@ import { useForm, useWatch } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import type { AccountType } from "@/types/domain";
 import type { Email, Password } from "@/types/utility/scalars";
 
 import { register } from "@/lib/auth/register";
+
+import { authSession } from "@/services/auth/session";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +32,6 @@ const ACCOUNT_TYPE_LABEL: Record<AccountType, string> = {
 };
 
 export function RegisterForm() {
-  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<RegisterFormValues>({
@@ -56,7 +56,10 @@ export function RegisterForm() {
         values.password as Password,
         values.accountType,
       );
-      router.push(values.accountType === "store" ? "/store/me" : "/me");
+      const session = await authSession();
+      const redirectPath =
+        session.accountType === "store" ? "/store/me" : "/me";
+      window.location.assign(redirectPath);
     } catch {
       setSubmitError(
         "登録に失敗しました。入力内容を確認して再度お試しください。",
