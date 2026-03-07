@@ -6,6 +6,8 @@ import Image from "next/image";
 import type { ItemDetailForBuyer } from "@/types/domain";
 import type { ItemId } from "@/types/domain";
 
+import { formatDateTime, formatYen } from "@/lib/formatter";
+
 import { getItemsItemId } from "@/services/items";
 
 import {
@@ -29,16 +31,6 @@ export function ItemDetailDialog({
   itemId,
   onOpenChange,
 }: ItemDetailDialogProps) {
-  // const regularPrice = itemDetail.price.regular.toLocaleString();
-  // const discountPrice = itemDetail.price.discount.toLocaleString();
-  // const saleRange = `${new Date(itemDetail.saleStart).toLocaleDateString()} 〜 ${new Date(itemDetail.saleEnd).toLocaleDateString()}`;
-  // const limitDate = new Date(itemDetail.limitDate).toLocaleDateString();
-
-  const regularPrice = "--- IGNORE ---";
-  const discountPrice = "--- IGNORE ---";
-  const saleRange = "--- IGNORE ---";
-  const limitDate = "--- IGNORE ---";
-
   const [itemDetail, setItemDetail] = useState<ItemDetailForBuyer | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -144,9 +136,11 @@ export function ItemDetailDialog({
                     <div className="pt-1">
                       <p className="text-[11px] text-white/70">Price</p>
                       <div className="mt-1 flex items-end gap-3">
-                        <p className="text-3xl font-bold">{discountPrice}円</p>
+                        <p className="text-3xl font-bold">
+                          {formatYen(itemDetail.price.discount)}
+                        </p>
                         <p className="pb-1 text-sm text-white/60 line-through">
-                          {regularPrice}円
+                          {formatYen(itemDetail.price.regular)}
                         </p>
                       </div>
 
@@ -180,7 +174,8 @@ export function ItemDetailDialog({
                           販売期間
                         </p>
                         <p className="text-brand-main-900 text-center font-semibold">
-                          {saleRange}
+                          {formatDateTime(itemDetail.saleStart)} ～{" "}
+                          {formatDateTime(itemDetail.saleEnd)}
                         </p>
                       </div>
                     </div>
@@ -203,7 +198,7 @@ export function ItemDetailDialog({
                           賞味期限
                         </p>
                         <p className="text-brand-main-900 text-center font-semibold">
-                          {limitDate}
+                          {formatDateTime(itemDetail.limitDate)}
                         </p>
                       </div>
                     </div>
