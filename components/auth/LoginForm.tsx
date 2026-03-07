@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import type { Email, Password } from "@/types/utility/scalars";
@@ -26,7 +25,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
@@ -43,7 +41,9 @@ export function LoginForm() {
     try {
       await login(values.email as Email, values.password as Password);
       const session = await authSession();
-      router.push(session.accountType === "store" ? "/store/me" : "/me");
+      const redirectPath =
+        session.accountType === "store" ? "/store/me" : "/me";
+      window.location.assign(redirectPath);
     } catch (error) {
       const message =
         error instanceof Error

@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { useRouter } from "next/navigation";
-
 import type { Buyer, Reports } from "@/types/domain";
 
 import { logout } from "@/lib/auth/logout";
@@ -29,7 +27,6 @@ function isRecentWithin7Days(iso: string): boolean {
 }
 
 export function BuyerProfile() {
-  const router = useRouter();
   const [profile, setProfile] = useState<Buyer | null>(null);
   const [reports, setReports] = useState<Reports | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -81,8 +78,7 @@ export function BuyerProfile() {
     try {
       setLogoutPending(true);
       await logout();
-      router.push("/");
-      router.refresh();
+      window.location.assign("/");
     } finally {
       setLogoutPending(false);
     }
