@@ -24,17 +24,17 @@ import { Skeleton } from "../ui/skeleton";
 type InfoItemProps = {
   icon: React.ReactNode;
   label: string;
-  value: React.ReactNode;
+  children: React.ReactNode;
 };
 
-function InfoItem({ icon, label, value }: InfoItemProps) {
+function InfoItem({ icon, label, children: value }: InfoItemProps) {
   return (
-    <div>
+    <div className="space-y-2">
       <p className="text-brand-main-600 mb-1 flex items-center gap-2 text-xs">
         {icon}
         {label}
       </p>
-      <p className="text-brand-main-900 text-center font-semibold">{value}</p>
+      <p className="text-brand-main-900 pl-6 font-semibold">{value}</p>
     </div>
   );
 }
@@ -174,35 +174,39 @@ export function ItemDetailDialog({
                   <InfoItem
                     icon={<Tag className="text-brand-accent-600 h-4 w-4" />}
                     label="カテゴリー"
-                    value={itemDetail.category}
-                  />
+                  >
+                    {itemDetail.category}
+                  </InfoItem>
 
                   <InfoItem
                     icon={
                       <CalendarDays className="text-brand-accent-600 h-4 w-4" />
                     }
                     label="販売期間"
-                    value={
-                      <>
-                        {formatDateTime(itemDetail.saleStart)} ～{" "}
-                        {formatDateTime(itemDetail.saleEnd)}
-                      </>
-                    }
-                  />
+                  >
+                    <div className="-ml-2 flex flex-col items-center gap-0 text-xs">
+                      <span>{formatDateTime(itemDetail.saleStart)} ～ </span>
+                      <span>{formatDateTime(itemDetail.saleEnd)}</span>
+                    </div>
+                  </InfoItem>
 
                   <InfoItem
                     icon={<Store className="text-brand-accent-600 h-4 w-4" />}
                     label="販売店舗"
-                    value={itemDetail.store.storeName}
-                  />
+                  >
+                    {itemDetail.store.storeName}
+                  </InfoItem>
 
                   <InfoItem
                     icon={
                       <CalendarDays className="text-brand-accent-600 h-4 w-4" />
                     }
                     label="賞味期限"
-                    value={formatDateTime(itemDetail.limitDate)}
-                  />
+                  >
+                    <div className="text-xs">
+                      {formatDateTime(itemDetail.limitDate)}
+                    </div>
+                  </InfoItem>
                 </div>
               </section>
             </div>
