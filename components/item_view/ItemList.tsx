@@ -2,21 +2,16 @@
 
 import { useState } from "react";
 
-import type {
-  ItemDetailForBuyer,
-  ItemId,
-  ItemViewForBuyer,
-} from "@/types/domain";
+import type { ItemId, ItemViewForBuyer } from "@/types/domain";
 
 import { ItemCard } from "./ItemCard";
 import { ItemDetailDialog } from "./ItemDetailDialog";
 
 interface ItemListProps {
   items: ItemViewForBuyer[];
-  fetchItemDetailById?: (itemId: ItemId) => Promise<ItemDetailForBuyer>;
 }
 
-export function ItemList({ items, fetchItemDetailById }: ItemListProps) {
+export function ItemList({ items }: ItemListProps) {
   const [itemDetail, setItemDetail] = useState<ItemId | null>(null);
 
   return (
@@ -29,7 +24,6 @@ export function ItemList({ items, fetchItemDetailById }: ItemListProps) {
 
       <ItemDetailDialog
         itemId={itemDetail}
-        fetchItemDetailById={fetchItemDetailById}
         onOpenChange={(open) => {
           if (!open) {
             setItemDetail(null);
