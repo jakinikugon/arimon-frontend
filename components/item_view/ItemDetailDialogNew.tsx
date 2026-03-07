@@ -34,7 +34,7 @@ function InfoItem({ icon, label, children: value }: InfoItemProps) {
         {icon}
         {label}
       </p>
-      <p className="text-brand-main-900 pl-6 font-semibold">{value}</p>
+      <div className="text-brand-main-900 pl-6 font-semibold">{value}</div>
     </div>
   );
 }
@@ -93,6 +93,8 @@ export function ItemDetailDialog({
   return (
     <Dialog open={itemId !== null} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100vw-1rem)] overflow-hidden border-0 p-0 sm:w-full sm:max-w-lg">
+        <DialogTitle className="hidden">商品詳細</DialogTitle>
+
         {isLoading ? (
           <div className="h-[84dvh] space-y-3 p-4">
             <Skeleton className="aspect-video w-full" />
@@ -175,7 +177,7 @@ export function ItemDetailDialog({
                     icon={<Tag className="text-brand-accent-600 h-4 w-4" />}
                     label="カテゴリー"
                   >
-                    {itemDetail.category}
+                    <p>{itemDetail.category}</p>
                   </InfoItem>
 
                   <InfoItem
@@ -184,17 +186,17 @@ export function ItemDetailDialog({
                     }
                     label="販売期間"
                   >
-                    <div className="-ml-2 flex flex-col items-center gap-0 text-xs">
+                    <p className="-ml-2 flex flex-col items-center gap-0 text-xs">
                       <span>{formatDateTime(itemDetail.saleStart)} ～ </span>
                       <span>{formatDateTime(itemDetail.saleEnd)}</span>
-                    </div>
+                    </p>
                   </InfoItem>
 
                   <InfoItem
                     icon={<Store className="text-brand-accent-600 h-4 w-4" />}
                     label="販売店舗"
                   >
-                    {itemDetail.store.storeName}
+                    <p>{itemDetail.store.storeName}</p>
                   </InfoItem>
 
                   <InfoItem
@@ -203,9 +205,9 @@ export function ItemDetailDialog({
                     }
                     label="賞味期限"
                   >
-                    <div className="text-xs">
+                    <p className="text-xs">
                       {formatDateTime(itemDetail.limitDate)}
-                    </div>
+                    </p>
                   </InfoItem>
                 </div>
               </section>
