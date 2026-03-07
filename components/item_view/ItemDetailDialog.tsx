@@ -7,7 +7,7 @@ import Image from "next/image";
 import type { ItemId } from "@/types/domain";
 import type { ItemDetailForBuyer } from "@/types/domain";
 
-import { formatYen } from "@/lib/formatter";
+import { formatDateTime, formatYen } from "@/lib/formatter";
 
 import { getItemsItemId } from "@/services/items";
 
@@ -18,16 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ItemDetailDialogProps {
   itemId: ItemId | null;
   onOpenChange: (open: boolean) => void;
-}
-
-function formatDateTime(iso: string): string {
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
 }
 
 export function ItemDetailDialog({
