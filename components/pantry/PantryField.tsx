@@ -284,6 +284,9 @@ export function PantryField() {
   const [addForm, setAddForm] = useState<PantryAddForm>(
     INITIAL_PANTRY_ADD_FORM,
   );
+  const [janSuggestedCategory, setJanSuggestedCategory] = useState<
+    string | null
+  >(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const [isPantryLoading, setIsPantryLoading] = useState(true);
@@ -390,35 +393,68 @@ export function PantryField() {
     };
   }, []);
 
-  const fillFormFromJanCode = useCallback(async (rawJanCode: string) => {
-    const janCode = rawJanCode.trim();
-
-    if (!janCode) {
-      setJanLookupError("JANコードを入力してください。");
+  useEffect(() => {
+    if (janSuggestedCategory === null || isCategoriesLoading) {
       return;
     }
 
-    setIsJanLookupLoading(true);
-    setJanLookupError(null);
+    const isMatched = categories.some(
+      (category) => category === janSuggestedCategory,
+    );
 
-    try {
-      const response = await getJan(janCode as JanCode);
-      setAddForm((current) => ({
-        ...current,
-        janCode,
-        name: response.name,
-        category: response.category,
-      }));
-      setSuggestions([]);
-      setSuggestionsError(null);
-    } catch {
-      setJanLookupError(
-        "JANコードから情報を取得できませんでした。手入力で追加できます。",
-      );
-    } finally {
-      setIsJanLookupLoading(false);
+    if (!isMatched) {
+      return;
     }
-  }, []);
+
+    setAddForm((current) => {
+      if (current.category.trim().length > 0) {
+        return current;
+      }
+
+      return {
+        ...current,
+        category: janSuggestedCategory,
+      };
+    });
+  }, [categories, isCategoriesLoading, janSuggestedCategory]);
+
+  const fillFormFromJanCode = useCallback(
+    async (rawJanCode: string) => {
+      const janCode = rawJanCode.trim();
+
+      if (!janCode) {
+        setJanLookupError("JANコードを入力してください。");
+        return;
+      }
+
+      setIsJanLookupLoading(true);
+      setJanLookupError(null);
+
+      try {
+        const response = await getJan(janCode as JanCode);
+        const isMatchedCategory = categories.some(
+          (category) => category === response.category,
+        );
+
+        setJanSuggestedCategory(response.category);
+        setAddForm((current) => ({
+          ...current,
+          janCode,
+          name: response.name,
+          category: isMatchedCategory ? response.category : "",
+        }));
+        setSuggestions([]);
+        setSuggestionsError(null);
+      } catch {
+        setJanLookupError(
+          "JANコードから情報を取得できませんでした。手入力で追加できます。",
+        );
+      } finally {
+        setIsJanLookupLoading(false);
+      }
+    },
+    [categories],
+  );
 
   const handleSubmitPantryItem = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -449,6 +485,7 @@ export function PantryField() {
         );
         setPantryItems(response.items);
         setAddForm(INITIAL_PANTRY_ADD_FORM);
+        setJanSuggestedCategory(null);
         setSuggestions([]);
         setSuggestionsError(null);
         setJanLookupError(null);
@@ -485,6 +522,13 @@ export function PantryField() {
     !isPantryAddSubmitting &&
     addForm.name.trim().length > 0 &&
     addForm.category.trim().length > 0;
+
+  const shouldShowJanCategoryHint =
+    janSuggestedCategory !== null &&
+    !isCategoriesLoading &&
+    categories.length > 0 &&
+    !categories.some((category) => category === janSuggestedCategory) &&
+    addForm.category.trim().length === 0;
 
   const shelfSlots = useMemo(() => {
     return buildPantryShelfSlots(pantryItems);
@@ -721,6 +765,7 @@ export function PantryField() {
                     id="pantry-dialog-jan-code"
                     value={addForm.janCode}
                     onChange={(event) => {
+                      setJanSuggestedCategory(null);
                       setAddForm((current) => ({
                         ...current,
                         janCode: event.target.value,
@@ -775,6 +820,11 @@ export function PantryField() {
                     disabled={isCategoriesLoading}
                   />
                 ) : null}
+                {shouldShowJanCategoryHint ? (
+                  <p className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                    {`この食材のカテゴリは「${janSuggestedCategory}」です。該当するカテゴリを入力してください。`}
+                  </p>
+                ) : null}
               </div>
 
               {pantryAddError ? <InlineError message={pantryAddError} /> : null}
@@ -791,6 +841,7 @@ export function PantryField() {
                   variant="outline"
                   onClick={() => {
                     setAddForm(INITIAL_PANTRY_ADD_FORM);
+                    setJanSuggestedCategory(null);
                     setSuggestions([]);
                     setPantryAddError(null);
                     setJanLookupError(null);
