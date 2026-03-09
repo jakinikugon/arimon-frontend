@@ -663,6 +663,34 @@ type BuyersMeChatMessagesPostResponse = Chat;
 }
 ```
 
+#### DELETE `/api/buyers/me/chat/messages`
+
+- buyer 自身のチャット履歴（messages + recipes）の全削除
+- リクエストボディはなし
+- 200 のとき OK（空チャットを返す）
+- 401 のとき Unauthorized
+- 関数名：DeleteBuyersMeChatMessages
+
+```ts
+type BuyersMeChatMessagesDeleteResponse = Chat;
+```
+
+200
+
+```json
+{
+  "messages": []
+}
+```
+
+401
+
+```json
+{
+  "message": "string"
+}
+```
+
 #### GET `/api/buyers/me/chat/recipes`
 
 - チャットで提案されたレシピの取得

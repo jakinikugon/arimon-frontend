@@ -7,3 +7,5 @@ export type BuyersMeChatMessagesPostRequest = {
 };
 
 export type BuyersMeChatMessagesPostResponse = Chat;
+
+export type BuyersMeChatMessagesDeleteResponse = Chat;

@@ -13,7 +13,7 @@
 - `/api/buyers/me/reports`(`GET`, `POST`): 報告した購入履歴、購入報告
 - `/api/buyers/me/pantry`(`GET`, `POST`): 冷蔵庫アイテムの取得・追加
 - `/api/buyers/me/pantry/{pantry_item_id}`(`DELETE`): 冷蔵庫アイテムの削除
-- `/api/buyers/me/chat/messages`(`GET`, `POST`): チャットの取得・ポスト
+- `/api/buyers/me/chat/messages`(`GET`, `POST`, `DELETE`): チャットの取得・ポスト・全削除
 - `/api/buyers/me/chat/recipes`(`GET`): チャットで提案されたレシピの取得
 
 ## Stores（店舗アカウント）
