@@ -780,6 +780,12 @@ export function PantryField() {
                   type="button"
                   variant="outline"
                   onClick={() => {
+                    const janCode = addForm.janCode.trim();
+                    if (janCode.length > 0) {
+                      void fillFormFromJanCode(janCode);
+                      return;
+                    }
+
                     setIsJanScannerOpen(true);
                   }}
                   disabled={isPantryAddSubmitting || isJanLookupLoading}
