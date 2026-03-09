@@ -1,4 +1,5 @@
 import type {
+  BuyersMeChatMessagesDeleteResponse,
   BuyersMeChatMessagesGetResponse,
   BuyersMeChatMessagesPostRequest,
   BuyersMeChatMessagesPostResponse,
@@ -29,6 +30,15 @@ export async function postBuyersMeChatMessages(content: string) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+    },
+  );
+}
+
+export async function deleteBuyersMeChatMessages() {
+  return fetcher<BuyersMeChatMessagesDeleteResponse>(
+    backendApiUrl("/api/buyers/me/chat/messages"),
+    {
+      method: "DELETE",
     },
   );
 }

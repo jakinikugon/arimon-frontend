@@ -1,6 +1,7 @@
 import { HttpResponse, http } from "msw";
 
 import type {
+  BuyersMeChatMessagesDeleteResponse,
   BuyersMeChatMessagesGetResponse,
   BuyersMeChatMessagesPostRequest,
   BuyersMeChatMessagesPostResponse,
@@ -110,6 +111,14 @@ export const buyersHandlers = [
           recipes: null,
         },
       ],
+    };
+
+    return HttpResponse.json(response);
+  }),
+
+  http.delete("*/api/buyers/me/chat/messages", () => {
+    const response: BuyersMeChatMessagesDeleteResponse = {
+      messages: [],
     };
 
     return HttpResponse.json(response);

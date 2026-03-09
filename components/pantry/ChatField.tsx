@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { FiTrash2 } from "react-icons/fi";
 import { IoReload } from "react-icons/io5";
 
 // import {
@@ -16,6 +17,7 @@ import { IoReload } from "react-icons/io5";
 // } from "../../mocks/simple/localMockApi";
 
 import {
+  deleteBuyersMeChatMessages,
   getBuyersMeChatMessages,
   getBuyersMeChatRecipes,
   postBuyersMeChatMessages,
@@ -33,6 +35,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -228,12 +241,14 @@ export function ChatField() {
   const [isChatLoading, setIsChatLoading] = useState(true);
   const [isRecipeHistoryLoading, setIsRecipeHistoryLoading] = useState(false);
   const [isChatSubmitting, setIsChatSubmitting] = useState(false);
+  const [isChatDeleting, setIsChatDeleting] = useState(false);
 
   const [chatError, setChatError] = useState<string | null>(null);
   const [recipeHistoryError, setRecipeHistoryError] = useState<string | null>(
     null,
   );
   const [chatSubmitError, setChatSubmitError] = useState<string | null>(null);
+  const [chatDeleteError, setChatDeleteError] = useState<string | null>(null);
 
   const recipeHistoryRequestIdRef = useRef(0);
 
@@ -332,8 +347,28 @@ export function ChatField() {
     [chatInput],
   );
 
+  const handleDeleteChatMessages = useCallback(async () => {
+    setIsChatDeleting(true);
+    setChatDeleteError(null);
+
+    try {
+      const response = await deleteBuyersMeChatMessages();
+      setChatMessages(response.messages);
+      setRecipeHistory([]);
+      setRecipeHistoryError(null);
+      setChatSubmitError(null);
+    } catch {
+      setChatDeleteError("チャット履歴の削除に失敗しました。");
+    } finally {
+      setIsChatDeleting(false);
+    }
+  }, []);
+
   const canSubmitChat =
-    !isChatSubmitting && !isChatLoading && chatInput.trim().length > 0;
+    !isChatSubmitting &&
+    !isChatDeleting &&
+    !isChatLoading &&
+    chatInput.trim().length > 0;
 
   const handleTabChange = useCallback((value: string) => {
     if (value === "chat" || value === "recipes") {
@@ -376,6 +411,58 @@ export function ChatField() {
                 disabled={isChatLoading}
               />
             ) : null}
+
+            {chatDeleteError ? <InlineError message={chatDeleteError} /> : null}
+
+            <div className="flex justify-end">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-500/40 bg-gray-100/70 p-0 text-gray-700"
+                    disabled={
+                      isChatLoading ||
+                      isChatSubmitting ||
+                      isChatDeleting ||
+                      chatMessages.length === 0
+                    }
+                    aria-label="チャット履歴を全削除"
+                    title="チャット履歴を全削除"
+                  >
+                    <FiTrash2 />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent size="sm">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      チャット履歴を削除しますか？
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      会話履歴と提案された献立履歴をすべて削除します。
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isChatDeleting}>
+                      キャンセル
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      variant="destructive"
+                      onClick={() => {
+                        void handleDeleteChatMessages();
+                      }}
+                      disabled={isChatDeleting}
+                    >
+                      {isChatDeleting ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : null}
+                      削除する
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
 
             <ScrollArea className="border-brand-accent-200/70 h-80 rounded-md border bg-white/80 p-3">
               {isChatLoading ? (
@@ -435,7 +522,7 @@ export function ChatField() {
                 }}
                 placeholder="例: 冷蔵庫にある食材で作れる夕飯を提案して"
                 className="focus-visible:border-brand-main-400 focus-visible:ring-brand-main-300/40"
-                disabled={isChatSubmitting}
+                disabled={isChatSubmitting || isChatDeleting}
               />
               {chatSubmitError ? (
                 <InlineError message={chatSubmitError} />

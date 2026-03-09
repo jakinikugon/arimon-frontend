@@ -19,5 +19,6 @@ export type {
   BuyersMeChatMessagesGetResponse,
   BuyersMeChatMessagesPostRequest,
   BuyersMeChatMessagesPostResponse,
+  BuyersMeChatMessagesDeleteResponse,
 } from "./me-chat-messages";
 export type { BuyersMeChatRecipesGetResponse } from "./me-chat-recipes";
